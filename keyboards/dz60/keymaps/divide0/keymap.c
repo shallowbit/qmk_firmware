@@ -4,8 +4,9 @@
 #include "mousekey.h"
 #include "version.h"
 #include "eeconfig.h"
+//#include "rgblight.h"
 
-#define KEYMAP_REV "1.01"
+#define KEYMAP_REV "1.03 rough lighting"
 /*
 NOTES:
 
@@ -13,7 +14,9 @@ NOTES:
   actually overlay not clear arrow cluster for temp mouse/pgup.dn/next.prev\top.bottom for sigle FN press cluster switching
     FN(1 tap) for hoome/end 2 taps back/forw 3 taps top/bottom? hold to clear?
 
-TODO: change LEDS_TAB to only swtich to led layer when no MODS are in pressed
+TODO:
+  change LEDS_TAB to only swtich to led layer when no MODS are in pressed
+  change layer colors to config dwords so you can save more complete layer configs although they would be reset unless save to eeprom
 
      *      ,-----------------------------------------------------------------------------------------.
      *      |     |     |     |     |     |     |     |     |     |     |     |     |     |           |
@@ -31,6 +34,9 @@ TODO: change LEDS_TAB to only swtich to led layer when no MODS are in pressed
      *      Dvorak http://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard
 
 */
+#ifdef RGBLIGHT_ENABLE
+rgblight_config_t rgblight_startup_config;
+#endif
 
 enum map_layers {
   _QWER = 0,
@@ -64,6 +70,7 @@ enum map_keycodes {
   MACR,
   BASE, // CLEAR ALL LAYERS
   //SPECIAL KEYS & MACROS
+  RGB_DEF, // To save default layer rgb color after init and beyond
   A_MUL,   // Mouse Upper left diagonal
   A_MUR,   // Mouse Upper right diagonal
   A_MDL,   // Mouse Lower left diagonal
@@ -96,11 +103,11 @@ enum map_dances {
 #define _______ KC_TRNS
 #define XXXXXXX KC_NO
 //Edits x,c,v,z
-#define MYCUT     KC_CUT // KC_CUT??
-#define MYCOPY    KC_COPY
-#define MYPASTE   KC_PASTE
-#define MYUNDO    KC_UNDO // #define UNDO    RCTL(KC_Z)
-#define MYREDO    KC_AGAIN // #define REDO    RCTL(RSFT(KC_Z))
+#define MYCUT     RCTL(KC_X) // KC_CUT??
+#define MYCOPY    RCTL(KC_C)
+#define MYPASTE   RCTL(KC_V)
+#define MYUNDO    RCTL(KC_Z)
+#define MYREDO    RCTL(RSFT(KC_Z))
 // Double Modifier ONLY hold
 #define ALT_SHFT LSFT(KC_LALT)
 #define CTR_SHFT LSFT(KC_LCTL)
@@ -135,35 +142,36 @@ enum map_dances {
 // #define RECSTOP DYN_REC_STOP
 //RGB EXTRAS
 #ifdef RGBLIGHT_ENABLE
-  #define rgblight_set_white       rgblight_sethsv(0,  0x00, 255);
-  #define rgblight_set_red         rgblight_sethsv(0,  255, 255);
-  #define rgblight_set_coral       rgblight_sethsv(16, 176, 255);
-  #define rgblight_set_orange      rgblight_sethsv(39,  255, 255);
-  #define rgblight_set_goldenrod   rgblight_sethsv(43,  218, 218);
-  #define rgblight_set_gold        rgblight_sethsv(51,  255, 255);
-  #define rgblight_set_yellow      rgblight_sethsv(60,  255, 255);
-  #define rgblight_set_chartreuse  rgblight_sethsv(90, 255, 255);
-  #define rgblight_set_green       rgblight_sethsv(120,  255, 255);
-  #define rgblight_set_springgreen rgblight_sethsv(150,  255, 255);
-  #define rgblight_set_turquoise   rgblight_sethsv(174,  90, 112);
-  #define rgblight_set_teal        rgblight_sethsv(180,  255, 128);
-  #define rgblight_set_cyan        rgblight_sethsv(180,  255, 255);
-  #define rgblight_set_azure       rgblight_sethsv(186,  102, 255);
-  #define rgblight_set_blue        rgblight_sethsv(240,  255, 255);
-  #define rgblight_set_purple      rgblight_sethsv(270, 255, 255);
-  #define rgblight_set_magenta     rgblight_sethsv(300, 255, 255);
-  #define rgblight_set_pink        rgblight_sethsv(330, 128, 255);
+  // Save these for reference. Maybe use names instead of hard coding below
+  // #define rgblight_set_white       rgblight_sethsv(0,   0x00, 255);
+  // #define rgblight_set_red         rgblight_sethsv(0,   255, 255);
+  // #define rgblight_set_coral       rgblight_sethsv(16,  176, 255);
+  // #define rgblight_set_orange      rgblight_sethsv(39,  255, 255);
+  // #define rgblight_set_goldenrod   rgblight_sethsv(43,  218, 218);
+  // #define rgblight_set_gold        rgblight_sethsv(51,  255, 255);
+  // #define rgblight_set_yellow      rgblight_sethsv(60,  255, 255);
+  // #define rgblight_set_chartreuse  rgblight_sethsv(90,  255, 255);
+  // #define rgblight_set_green       rgblight_sethsv(120, 255, 255);
+  // #define rgblight_set_springgreen rgblight_sethsv(150, 255, 255);
+  // #define rgblight_set_turquoise   rgblight_sethsv(174, 90,  112);
+  // #define rgblight_set_teal        rgblight_sethsv(180, 255, 128);
+  // #define rgblight_set_cyan        rgblight_sethsv(180, 255, 255);
+  // #define rgblight_set_azure       rgblight_sethsv(186, 102, 255);
+  // #define rgblight_set_blue        rgblight_sethsv(240, 255, 255);
+  // #define rgblight_set_purple      rgblight_sethsv(270, 255, 255);
+  // #define rgblight_set_magenta     rgblight_sethsv(300, 255, 255);
+  // #define rgblight_set_pink        rgblight_sethsv(330, 128, 255);
   #ifdef RGBLIGHT_ANIMATIONS
-    const uint16_t RGBLED_GRADIENT_RANGES[] PROGMEM = {360, 240, 180, 120, 90}; // These control which colors are selected for the gradient mode
-    const uint8_t RGBLED_BREATHING_INTERVALS[] PROGMEM = {30, 20, 10, 5};       // How long (in ms) to wait between animation steps for the breathing mode
-    const uint8_t RGBLED_RAINBOW_MOOD_INTERVALS[] PROGMEM = {120, 60, 30};      // How long (in ms) to wait between animation steps for the rainbow mode
-    const uint8_t RGBLED_RAINBOW_SWIRL_INTERVALS[] PROGMEM = {100, 50, 20};     // How long (in ms) to wait between animation steps for the swirl mode
-    const uint8_t RGBLED_SNAKE_INTERVALS[] PROGMEM = {100, 50, 20};             // How long (in ms) to wait between animation steps for the snake mode
-    const uint8_t RGBLED_KNIGHT_INTERVALS[] PROGMEM = {127, 63, 31};            // How long (in ms) to wait between animation steps for the knight modes
+    // const uint16_t RGBLED_GRADIENT_RANGES[] PROGMEM = {360, 240, 180, 120, 90}; // These control which colors are selected for the gradient mode
+    // const uint8_t RGBLED_BREATHING_INTERVALS[] PROGMEM = {16, 8, 4, 2};       // How long (in ms) to wait between animation steps for the breathing mode
+    // const uint8_t RGBLED_RAINBOW_MOOD_INTERVALS[] PROGMEM = {120, 60, 30};      // How long (in ms) to wait between animation steps for the rainbow mode
+    // const uint8_t RGBLED_RAINBOW_SWIRL_INTERVALS[] PROGMEM = {100, 50, 20};     // How long (in ms) to wait between animation steps for the swirl mode
+    // const uint8_t RGBLED_SNAKE_INTERVALS[] PROGMEM = {100, 50, 20};             // How long (in ms) to wait between animation steps for the snake mode
+    // const uint8_t RGBLED_KNIGHT_INTERVALS[] PROGMEM = {127, 63, 31};            // How long (in ms) to wait between animation steps for the knight modes
   #endif
 #endif
 
-//SPECIAL
+//SPECIAL<
 //SHORTEN SOME FUNCTION CALLS
 #define FKEY_ESC LT(MO(_FKEY),KC_ESC)         // fkey(HELD)          esc(TAPPED)
 //#define FKEY_CTL LT(MO(_FKEY),OSM(KC_LCTL)) // fkey(HELD)          control(TAPPED)
@@ -247,7 +255,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   	[_LEDS] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
    		KC_GESC,   RGB_M_P,   RGB_M_B,   RGB_M_R,   RGB_M_SW,  RGB_M_SN,  RGB_M_K,   RGB_M_X,   RGB_M_G,   _________, _________, RGB_RMOD,  RGB_MOD,              RGB_TOG,
   		_________,            RGB_HUI,   RGB_SAI,   RGB_VAI,   _________, _________, _________, QWER,      COLE,      WORK,      DVOR,      _________, _________, RESET,
-  		_________,            RGB_HUD,   RGB_SAD,   RGB_VAD,   _________, _________, _________, FKEY,      PNTR,      LEDS,      MDIA,      MACR,      _________,
+  		_________,            RGB_HUD,   RGB_SAD,   RGB_VAD,   _________, _________, _________, FKEY,      PNTR,      LEDS,      MDIA,      MACR,      RGB_DEF,
       _________,            _________, _________, BL_DEC,    BL_TOGG,   BL_INC,    _________, SYMB,      _________, _________, _________, _________, _________, _________,
   		_________, _________, _________,                       TD(TD_L23),TD(TD_L10),QWER,                            _________, _________, _________, _________, _________
     ),
@@ -363,6 +371,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case MDIA:
         layer_on(_MDIA);
         return false;
+      case RGB_DEF:
+        dprintf("SAVING NEW DEFAULTS FROM KEYPRESS");
+        eeconfig_debug_rgblight();
+        rgblight_startup_config.raw = eeconfig_read_rgblight();
+        return false;
       // MOUSE MOVEMENTS
       #ifdef MOUSEKEY_ENABLE
       case A_MUL:
@@ -451,59 +464,94 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef RGBLIGHT_ENABLE
 uint32_t layer_state_set_user(uint32_t state) {
 
-  // rgblight_config_t rgblight_config;
-  // rgblight_config.raw = eeconfig_read_rgblight();
-  //
-  // if (!rgblight_config.enable || rgblight_config.mode != 1) { return state; }
-  //
-  // uint8_t rgb_val = rgblight_config.val;
+  #ifdef CONSOLE_ENABLE
+    xprintf("KL: row: %u, column: %u, pressed: %u\n", record->event.key.col, record->event.key.row, record->event.pressed);
+    //eeconfig_debug_rgblight();
+  #endif
+
+  rgblight_config_t rgblight_entry_config;
+  rgblight_entry_config.raw = eeconfig_read_rgblight();
 
   uint8_t default_layer = eeconfig_read_default_layer();
+  uint8_t tobright = 120;
+
+  if (rgblight_entry_config.enable) {
+    dprintf("Lights were on testing need for adjustment .val = %d", rgblight_entry_config.val);
+    // set a reasonable brightness increase adjustment as to not shock you with brightness increases (170 = 255, 20 = 30)
+    tobright = (rgblight_entry_config.val <= 170) ? ((rgblight_entry_config.val / 2) + rgblight_entry_config.val) : 255;
+  }
+  dprintf("Brightness value PRE:CUR %d:%d", rgblight_entry_config.val, tobright);
+
+  // don't change mode if we are currently static or breathing
+  uint8_t mode = (rgblight_entry_config.mode <= 2) ? rgblight_entry_config.mode : 1 ;
+  dprintf("Mode value PRE:CUR %d:%d", rgblight_entry_config.mode, mode);
 
   switch (biton32(state)) {
-  // BREAMTH MODE layers rgblight_mode(1)
-  case _FKEY:
-    rgblight_set_blue;
-    rgblight_mode(1);
-    break;
-  case _LEDS:
-    rgblight_set_springgreen;
-    rgblight_mode(1);
-    break;
-  // BREAMTH MODE layers rgblight_mode(2)
-  case _PNTR:
-    rgblight_set_chartreuse;
-    rgblight_mode(2);
-    break;
-  case _SYMB:
-    rgblight_set_yellow;
-    rgblight_mode(2);
-    break;
-  case _MDIA:
-    rgblight_set_orange;
-    rgblight_mode(2);
-    break;
-  case _MACR:
-    rgblight_set_chartreuse;
-    rgblight_mode(2);
-    break;
-  default:
-    if (default_layer & (1UL << _COLE)) {
-      rgblight_set_magenta;
-    }
-    else if (default_layer & (1UL << _DVOR)) {
-      rgblight_set_green;
-    }
-    else if (default_layer & (1UL << _WORK)) {
-      rgblight_set_goldenrod;
-    }
-    else {
-      eeconfig_debug_rgblight();
-      rgblight_set_teal;
-    }
-    break;
+    // Case seems to have to check from lowest to highest
+    // or at least check layers in orderto use the highest layer color
+    case _FKEY:
+      rgblight_enable();
+      rgblight_mode(mode);
+      rgblight_sethsv(240, 255, tobright); // blue
+      break;
+    case _PNTR:
+      rgblight_enable();
+      rgblight_mode(mode);
+      rgblight_sethsv(90, 255, tobright); // chartreuse
+      break;
+    case _LEDS:
+      rgblight_enable();
+      rgblight_mode(mode);
+      rgblight_sethsv(150, 255, tobright); // springgreen
+      break;
+    case _SYMB:
+      rgblight_enable();
+      rgblight_mode(mode);
+      rgblight_sethsv(60, 255, tobright); // yellow
+      break;
+    case _MDIA:
+      rgblight_enable();
+      rgblight_mode(mode);
+      rgblight_sethsv(43, 218, tobright); // goldenrod
+      break;
+    case _MACR:
+      rgblight_enable();
+      rgblight_mode(mode);
+      rgblight_sethsv(16, 176, tobright); // springgreen
+      break;
+    default:
+      if (default_layer & (1UL << _COLE)) {
+        //set color values but dont change brightness .. not tested
+        rgblight_sethsv(300, 255, rgblight_entry_config.val); // magenta _COLE/_DVOR/_WORK not yet integrated ...
+      }
+      else if (default_layer & (1UL << _DVOR)) {
+        rgblight_sethsv(120, 255, rgblight_entry_config.val); // green _COLE/_DVOR/_WORK not yet integrated ...
+      }
+      else if (default_layer & (1UL << _WORK)) {
+        rgblight_sethsv(43, 218, rgblight_entry_config.val); // goldenrod _COLE/_DVOR/_WORK not yet integrated ...
+      }
+      else {
+        //rgblight_set_teal;
+        dprintf("Entering the default layer ...");
+        eeconfig_debug_rgblight();
+        dprintf("Setting previous values for default\\ layer ...");
+        // reset default layer rgb values from defualts
+        rgblight_update_dword(rgblight_startup_config.raw);
+      }
+      break;
   }
-
   return state;
 }
 #endif
+
+void matrix_init_user(void) {
+  dprintf("STARTING UP ...");
+  // Keyboard start-up code goes here
+  // Runs once when the firmware starts up
+  #ifdef RGBLIGHT_ENABLE
+    // save RGB values so we can switch restore when layer switching
+    dprintf("SAVING RGBLIGHT VALUES");
+    eeconfig_debug_rgblight();
+    rgblight_startup_config.raw = eeconfig_read_rgblight();
+  #endif
+};
