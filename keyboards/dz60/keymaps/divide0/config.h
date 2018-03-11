@@ -41,10 +41,6 @@
     keyboard_report->mods == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)) \
 )
 
-/* prevent stuck modifiers */
-/* supposed to release all mods when switching layers? */
-#define PREVENT_STUCK_MODIFIERS
-
 #define RGB_DI_PIN E2
 #define RGBLED_NUM 16
 
@@ -76,13 +72,13 @@
 #endif
 
 #if MOUSEKEY_ENABLE
-    #define MOUSEKEY_INTERVAL 10          //  how long to wait between each movement report
-    #define MOUSEKEY_DELAY 100            // delay between button press and the cursor moving
-    #define MOUSEKEY_TIME_TO_MAX 40       // how quickly your cursor will accelerate to max
-    #define MOUSEKEY_MAX_SPEED 8          // overall speed
-    #define MOUSEKEY_WHEEL_DELAY 0        // like above but for the wheel movement
-    #define MOUSEKEY_WHEEL_MAX_SPEED 8    // like above but for the wheel movement
-    #define MOUSEKEY_WHEEL_TIME_TO_MAX 40 // how quickly scrolling will accelerate to max
+  #define MOUSEKEY_INTERVAL 10          //  how long to wait between each movement report
+  #define MOUSEKEY_DELAY 100            // delay between button press and the cursor moving
+  #define MOUSEKEY_TIME_TO_MAX 40       // how quickly your cursor will accelerate to max
+  #define MOUSEKEY_MAX_SPEED 8          // overall speed
+  #define MOUSEKEY_WHEEL_DELAY 0        // like above but for the wheel movement
+  #define MOUSEKEY_WHEEL_MAX_SPEED 8    // like above but for the wheel movement
+  #define MOUSEKEY_WHEEL_TIME_TO_MAX 40 // how quickly scrolling will accelerate to max
 #endif
 
 //GAVE_ESC
@@ -91,7 +87,29 @@
 // #define GRAVE_ESC_GUI_OVERRIDE   // if GUI is pressed, ESC is always sent
 // #define GRAVE_ESC_SHIFT_OVERRIDE // if SHIFT is pressed, ESC is always sent
 
-#define DYNAMIC_MACRO_SIZE 128
+/* prevent stuck modifiers */
+/* supposed to release all mods when switching layers? */
+#define PREVENT_STUCK_MODIFIERS
 
+// #define NO_DEBUG
+// #define NO_PRINT
+// #define USER_PRINT
+
+// #define NO_ACTION_LAYER
+// #define NO_ACTION_TAPPING
+// #define NO_ACTION_ONESHOT
+// #define NO_ACTION_MACRO
+// #define NO_ACTION_FUNCTION
+
+#define DYNAMIC_MACRO_SIZE 128
+#define TAPPING_TERM 300
+// #define RETRO_TAPPING // tap anyway, even after TAPPING_TERM, if there was no other key interruption between press and release
+// #define TAPPING_TOGGLE 2
+// #define PERMISSIVE_HOLD
+#define LEADER_TIMEOUT 300
+// #define ONESHOT_TIMEOUT 300
+// #define ONESHOT_TAP_TOGGLE 2
+// #define IGNORE_MOD_TAP_INTERRUPT // makes it possible to do rolling combos (zx) with keys that convert to other keys on hold
+// #define QMK_KEYS_PER_SCAN 4
 
 #endif
