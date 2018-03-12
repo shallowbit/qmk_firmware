@@ -104,10 +104,10 @@
 #define DYNAMIC_MACRO_SIZE 128
 #define TAPPING_TERM 300
 // #define RETRO_TAPPING // tap anyway, even after TAPPING_TERM, if there was no other key interruption between press and release
-// #define TAPPING_TOGGLE 2
+#define TAPPING_TOGGLE 1
 // #define PERMISSIVE_HOLD
 #define LEADER_TIMEOUT 300
-// #define ONESHOT_TIMEOUT 300
+#define ONESHOT_TIMEOUT 1000
 // #define ONESHOT_TAP_TOGGLE 2
 // #define IGNORE_MOD_TAP_INTERRUPT // makes it possible to do rolling combos (zx) with keys that convert to other keys on hold
 // #define QMK_KEYS_PER_SCAN 4

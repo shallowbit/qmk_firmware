@@ -36,24 +36,21 @@ enum map_keycodes {
   A_MUR,   // Mouse Upper right diagonal
   A_MDL,   // Mouse Lower left diagonal
   A_MDR,   // Mouse Lower right diagonal
-  MAKE,
   VERS,
   TILSLSH,
-  DEREF,
-  EQRIGHT,
   EPRM,
   DYNAMIC_MACRO_RANGE // Must be last
 };
 
 enum map_dances {
-  TD_L10 = 0,
-  TD_L23,
-  TD_L45,
-  TD_Q_R,
-  TTT,
-  BTT,
+  TTT = 0,
+  BSLHT,
+  CAPT,
   CMMT,
   TABT,
+  GUIT,
+  LSFTT,
+  LCTLT,
 };
 
 enum tap_types {
@@ -109,6 +106,8 @@ enum tap_types {
 
 #ifdef TAP_DANCE_ENABLE
 
+  void send_all_taps(uint16_t keycode, uint8_t multi);
+
   int cur_dance (qk_tap_dance_state_t *state);
   int hold_cur_dance (qk_tap_dance_state_t *state);
 
@@ -124,11 +123,23 @@ enum tap_types {
   void comma_finished (qk_tap_dance_state_t *state, void *user_data);
   void comma_reset (qk_tap_dance_state_t *state, void *user_data);
 
-  void bt_finished (qk_tap_dance_state_t *state, void *user_data);
-  void bt_reset (qk_tap_dance_state_t *state, void *user_data);
+  void bslh_finished (qk_tap_dance_state_t *state, void *user_data);
+  void bslh_reset (qk_tap_dance_state_t *state, void *user_data);
+
+  void cap_finished (qk_tap_dance_state_t *state, void *user_data);
+  void cap_reset (qk_tap_dance_state_t *state, void *user_data);
 
   void ttt_finished (qk_tap_dance_state_t *state, void *user_data);
   void ttt_reset (qk_tap_dance_state_t *state, void *user_data);
+
+  void gui_finished (qk_tap_dance_state_t *state, void *user_data);
+  void gui_reset (qk_tap_dance_state_t *state, void *user_data);
+
+  void rctl_finished (qk_tap_dance_state_t *state, void *user_data);
+  void rctl_reset (qk_tap_dance_state_t *state, void *user_data);
+
+  void lsft_finished (qk_tap_dance_state_t *state, void *user_data);
+  void lsft_reset (qk_tap_dance_state_t *state, void *user_data);
 #endif
 
 // SHORTEN STUFF
@@ -137,8 +148,10 @@ enum tap_types {
 #define ________ KC_TRNS
 #define _______ KC_TRNS
 #define XXXXXXX KC_NO
-#define PRESS(kc)   register_code16(kc)
-#define RELEASE(kc) unregister_code16(kc)
+#define PRESS(kc)   register_code(kc)
+#define RELEASE(kc) unregister_code(kc)
+#define SEND_VERS SEND_STRING(QMK_KEYBOARD "/" QMK_KEYMAP ":v" KEYMAP_REV);
+// KEY MACROS
 #define MYCUT     RCTL(KC_X) // -------------------- Edits x,c,v,z
 #define MYCOPY    RCTL(KC_C)
 #define MYPASTE   RCTL(KC_V)
@@ -148,12 +161,14 @@ enum tap_types {
 #define CTR_SHFT  LSFT(KC_LCTL)
 #define MYTOP     RCTL(KC_PGUP) // -------------- Navigation other
 #define MYBOT     RCTL(KC_PGDN)
-#define CSLEFT    RCTL(KC_LEFT) // -------- Partial word movements
-#define CSRIGHT   RCTL(KC_RIGHT)
-#define CLEFT     RCTL(LSFT(KC_LEFT))
-#define CRIGHT    RCTL(LSFT(KC_RIGHT))
+#define CLEFT     RCTL(KC_LEFT) // -------- Partial word movements
+#define CRIGHT    RCTL(KC_RIGHT)
+#define CSLEFT    RCTL(RSFT(KC_LEFT))
+#define CSRIGHT   RCTL(RSFT(KC_RIGHT))
 #define ALEFT     RALT(KC_LEFT)
 #define ARIGHT    RALT(KC_RIGHT)
+#define ASLEFT    RALT(RSFT(KC_LEFT))
+#define ASRIGHT   RALT(RSFT(KC_RIGHT))
 #define WINL      LGUI(KC_LEFT) // --------- Windows/gui movements
 #define WINR      LGUI(KC_RIGHT)
 #define WINUP     LGUI(KC_UP)

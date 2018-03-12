@@ -16,7 +16,8 @@
 tags
 *~
 build/
-.build/
+.build/*
+!.build/dz60_divide0.hex
 *.bak
 .vagrant/
 quantum/version.h

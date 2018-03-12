@@ -1,34 +1,14 @@
 #include "dz60.h"
 #include "divide0.h"
-#include "eeconfig.h"
+//#include "eeconfig.h"
 #include "dynamic_macro.h"
-#include "version.h"
+//#include "version.h"
+//#include "print.h"
 #ifdef MOUSEKEY_ENABLE
   #include "mousekey.h"
 #endif
 
-#define KEYMAP_REV "1.10"
-/*
-NOTES:
-  add ctl+directions/alt+directions/top/bottom/word-del-forward/ to left hand on _FKEY instead of mouse movement?
-  actually overlay not clear arrow cluster for temp mouse/pgup.dn/next.prev\top.bottom for sigle FN press cluster switching
-      FN(1 tap) for hoome/end 2 tapgs back/forw 3 taps top/bottom? hold to clear?
-TODO:
-  change LEDS_TAB to only swtich to led layer when no MODS are in pressed
-  change layer colors to config dwords so you can save more complete layer configs although they would be reset unless save to eeprom
-
-     *      ,---------------------------------------------------------------------------------------------------------------------.
-     *      |       |       |       |       |       |       |       |       |       |       |       |       |       |             |
-     *      |---------------------------------------------------------------------------------------------------------------------+
-     *      |          |       |       |       |       |       |       |       |       |       |       |       |       |          |
-     *      |---------------------------------------------------------------------------------------------------------------------+
-     *      |            |       |       |       |       |       |       |       |       |       |       |       |                |
-     *      |---------------------------------------------------------------------------------------------------------------------+
-     *      |             |       |       |       |       |       |       |       |       |       |       |       |       |       |
-     *      |---------------------------------------------------------------------------------------------------------------------+
-     *      |         |         |         |               |         |                     |       |       |       |       |       |
-     *      `---------------------------------------------------------------------------------------------------------------------'
-*/
+#define KEYMAP_REV "1.20"
 
 //Tap Dance Definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
@@ -36,9 +16,13 @@ qk_tap_dance_action_t tap_dance_actions[] = {
   // [CALC_PRINTSCREEN] = ACTION_TAP_DANCE_DOUBLE(KC_CALCULATOR, KC_PSCR),
   // [ALTF4] = ACTION_TAP_DANCE_DOUBLE(KC_F4,LALT(KC_F4)),
   [TTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, ttt_finished, ttt_reset),
-  [BTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, bt_finished, bt_reset),
+  [BSLHT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, bslh_finished, bslh_reset),
+  [CAPT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, cap_finished, cap_reset),
   [CMMT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, comma_finished, comma_reset),
   [TABT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, tab_finished, tab_reset),
+  [GUIT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, gui_finished, gui_reset),
+  [LSFTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lsft_finished, lsft_reset),
+//[LCTLT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lctl_finished, lctl_reset),
 };
 
 void persistent_default_layer_set(uint16_t default_layer) {
@@ -67,10 +51,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     //                      A          S          D          F          G          H          J          K          L          :          '          ENTER      BSPC
     [_QWER] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
   		KC_GESC,   KC_1,      KC_2,      KC_3,      KC_4,      KC_5,      KC_6,      KC_7,      KC_8,      KC_9,      KC_0,      KC_MINS,   KC_EQL,               KC_BSPC,
-  		TD(TABT),             KC_Q,      KC_W,      KC_E,      KC_R,      KC_T,      KC_Y,      KC_U,      KC_I,      KC_O,      KC_P,      KC_LBRC,   KC_RBRC,   TD(BTT),
-  		FKEY_ESC,             KC_A,      KC_S,      KC_D,      KC_F,      KC_G,      KC_H,      KC_J,      KC_K,      KC_L,      KC_SCLN,   KC_QUOT,   KC_ENT,
-  		KC_LSFT,              KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_N,      KC_M,      TD(CMMT),  KC_DOT,    KC_SLSH,   SHFT_BLS,  KC_UP,      BASE,
-  		KC_LCTL,   KC_LGUI,   KC_LALT,                         KC_SPACE,  TD(TTT),   KC_SPACE,                        KC_RCTL,   MO(_FKEY), KC_LEFT,   KC_DOWN,    KC_RIGHT
+  		TD(TABT),             KC_Q,      KC_W,      KC_E,      KC_R,      KC_T,      KC_Y,      KC_U,      KC_I,      KC_O,      KC_P,      KC_LBRC,   KC_RBRC,   TD(BSLHT),
+  		TD(CAPT),             KC_A,      KC_S,      KC_D,      KC_F,      KC_G,      KC_H,      KC_J,      KC_K,      KC_L,      KC_SCLN,   KC_QUOT,   KC_ENT,
+  		TD(LSFTT),            KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_N,      KC_M,      TD(CMMT),  KC_DOT,    KC_SLSH,   SHFT_BLS,  KC_UP,      BASE,
+  		KC_LCTL,   TD(GUIT),  KC_LALT,                         KC_SPACE,  TD(TTT),   KC_SPACE,                        KC_HOME,   KC_END,    KC_LEFT,   KC_DOWN,    KC_RIGHT
     ),
     /*
      [_COLE] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
@@ -83,7 +67,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_WORK] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
       KC_ESC,    KC_1,      KC_2,      KC_3,      KC_4,      KC_5,      KC_6,      KC_7,      KC_8,      KC_9,      KC_0,      KC_MINS,   KC_EQL,               KC_BSPC,
       KC_TAB,               KC_Q,      KC_D,      KC_R,      KC_W,      KC_B,      KC_J,      KC_F,      KC_U,      KC_P,      KC_SCLN,   KC_LBRC,   KC_RBRC,   RESET,
-      KC_LC TL,             KC_A,      KC_ S,     KC _H,     KC_T,      KC_G,      KC_Y,      KC_N,      KC_E,      KC_O,      KC_I,      KC_QUOT,   KC_ENT,
+      KC_LC TL,             KC_A,      KC_ S,     KC_H,      KC_T,      KC_G,      KC_Y,      KC_N,      KC_E,      KC_O,      KC_I,      KC_QUOT,   KC_ENT,
       KC_LSFT,              KC_Z,      KC_X,      KC_M,      KC_C,      KC_V,      KC_K,      KC_L,      KC_COMM,   KC_DOT,    KC_SLSH,   KC_BSLS,   KC_UP,     MO(_FN),
   		KC_LCTL,   KC_LGUI,   KC_LALT,                         TD_L23,    TD_L10,    TD_L45,                          MO(_RGB),  MO(_RST),  KC_LEFT,   KC_DOWN,   KC_RIGHT
     ),
@@ -97,32 +81,33 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     */
     // LEFT:WORDS + EDITS | RIGHT:FKEYS + MOVEMENTS
     [_FKEY] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
-      KC_GESC,   KC_F1,     KC_F2,     KC_F3,     KC_F4,     KC_F5,     KC_F6,     KC_F7,     KC_F8,     KC_F9,     KC_F10,    KC_F11,    KC_F12,               KC_BSPC,
-      _________,            _________, _________, _________, _________, KC_WH_U,   MYCOPY,    KC_HOME,   KC_PGUP,   KC_END,    MYPASTE,   _________, _________, TD(TD_Q_R),
+      _________, KC_F1,     KC_F2,     KC_F3,     KC_F4,     KC_F5,     KC_F6,     KC_F7,     KC_F8,     KC_F9,     KC_F10,    KC_F11,    KC_F12,               KC_BSPC,
+      _________,            ASLEFT,    ALEFT,     ARIGHT,    ASRIGHT,   KC_WH_U,   MYCOPY,    KC_HOME,   KC_PGUP,   KC_END,    MYPASTE,   _________, _________, RESET,
       _________,            CSLEFT,    CLEFT,     CRIGHT,    CSRIGHT,   _________, KC_LEFT,   KC_DOWN,   KC_UP,     KC_RIGHT,  _________, _________, KC_ENT,
       _________,            MYUNDO,    MYCUT,     MYCOPY,    MYPASTE,   KC_WH_D,   _________, CLEFT,     KC_PGDN,   CRIGHT,    MYREDO,    _________, KC_PGUP,   _________,
       _________, _________, _________,                       KC_SPACE,  TD(TTT),   KC_SPACE,                        _________, _________, KC_HOME,   KC_PGDN,   KC_END
     ),
     [_PNTR] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
-   		KC_GESC,   KC_BTN1,   KC_BTN2,   KC_BTN3,   KC_BTN4,   KC_BTN5,   _________, _________, _________, _________, KC_ACL0,   KC_ACL1,   KC_ACL2,              _________,
-  		_________,            KC_BTN1,   KC_MS_U,   KC_BTN2,   KC_WH_U,   _________, _________, _________, _________, _________, _________, _________, _________, RESET,
-  		_________,            KC_MS_L,   KC_MS_D,   KC_MS_R,   KC_WH_D,   _________, _________, _________, _________, _________, _________, _________, _________,
-  		_________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, KC_BTN1,   KC_MS_U,   KC_BTN2,
-  		_________, _________, _________,                       KC_SPACE,  TD(TTT),   KC_SPACE,                        _________, _________, KC_MS_L,   KC_MS_D,   KC_MS_R
-    ),
-  	[_LEDS] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
-   		KC_GESC,   RGB_M_P,   RGB_M_B,   RGB_M_R,   RGB_M_SW,  RGB_M_SN,  RGB_M_K,   RGB_M_X,   RGB_M_G,   _________, _________, RGB_RMOD,  RGB_MOD,              RGB_TOG,
-  		_________,            RGB_HUI,   RGB_SAI,   RGB_VAI,   _________, _________, _________, QWER,      COLE,      WORK,      DVOR,      _________, _________, RESET,
-  		_________,            RGB_HUD,   RGB_SAD,   RGB_VAD,   _________, _________, _________, FKEY,      PNTR,      LEDS,      MDIA,      MACR,      RGB_DEF,
-      _________,            _________, _________, BL_DEC,    BL_TOGG,   BL_INC,    _________, SYMB,      _________, _________, _________, _________, _________, _________,
+   		_________, KC_BTN1,   KC_BTN2,   KC_BTN3,   KC_BTN4,   KC_BTN5,   _________, _________, _________, _________, _________, _________, _________,            _________,
+  		_________,            _________, KC_BTN1,   KC_MS_U,   KC_BTN2,   KC_WH_U,   KC_WH_U,   KC_BTN1,   KC_MS_U,   KC_BTN2,   _________, _________, _________, RESET,
+  		_________,            _________, KC_MS_L,   KC_MS_D,   KC_MS_R,   KC_WH_D,   KC_WH_D,   KC_MS_L,   KC_MS_D,   KC_MS_R,   _________, _________, _________,
+  		_________,            _________, KC_ACL0,   KC_ACL1,   KC_ACL2,   _________, _________, KC_ACL0,   KC_ACL1,   KC_ACL2,   _________, _________, _________, _________,
   		_________, _________, _________,                       KC_SPACE,  TD(TTT),   KC_SPACE,                        _________, _________, _________, _________, _________
     ),
+  	[_LEDS] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
+   		_________, RGB_M_P,   RGB_M_B,   RGB_M_R,   RGB_M_SW,  RGB_M_SN,  RGB_M_K,   RGB_M_X,   RGB_M_G,   _________, _________, RGB_RMOD,  RGB_MOD,              RGB_TOG,
+  		_________,            RGB_HUI,   RGB_SAI,   RGB_VAI,   _________, _________, _________, _________, _________, _________, _________, KC_SLEP,   KC_WAKE,   RESET,
+  		_________,            RGB_HUD,   RGB_SAD,   RGB_VAD,   _________, _________, _________, _________, _________, _________, KC_MPRV,   KC_MNXT,   RGB_DEF,
+      _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, KC_VOLU,   _________,
+  		_________, _________, _________,                       KC_SPACE,  TD(TTT),   KC_SPACE,                        _________, _________, KC_MSTP,   KC_VOLD,   KC_MPLY
+    ),
+    //This layer is intended to be a layer where QWERTY is mirrored without any HOLD keys so any key can be eaisly repeated by holding down the key.
   	[_MDIA] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
-   		KC_GESC,   KC_WSCH,   KC_MAIL,   KC_CALC,   KC_MYCM ,  KC_WREF,   KC_WSTP,   _________, _________, _________, _________, KC_SLEP,   KC_WAKE,              KC_MSTP,
-  		_________,            _________, _________, _________, KC_WREF,   _________, _________, _________, _________, _________, _________, _________, _________, RESET,
-  		_________,            KC_WBAK,   _________, _________, _________, KC_WFWD,   KC_WBAK,   _________, _________, KC_WFWD,   _________, _________, KC_MPLY,
-  		_________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, KC_WFAV,   _________, KC_VOLU,   _________,
-  		_________, _________, _________,                       KC_SPACE,  TD(TTT),   KC_SPACE,                        _________, _________, KC_MPRV,   KC_VOLD,   KC_MNXT
+      _________, KC_1,      KC_2,      KC_3,      KC_4,      KC_5,      KC_6,      KC_7,      KC_8,      KC_9,      KC_0,      KC_MINS,   KC_EQL,               KC_BSPC,
+      _________,            KC_Q,      KC_W,      KC_E,      KC_R,      KC_T,      KC_Y,      KC_U,      KC_I,      KC_O,      KC_P,      KC_LBRC,   KC_RBRC,   _________,
+      _________,            KC_A,      KC_S,      KC_D,      KC_F,      KC_G,      KC_H,      KC_J,      KC_K,      KC_L,      KC_SCLN,   KC_QUOT,   KC_ENT,
+      _________,            KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_N,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,   SHFT_BLS,  KC_UP,     _________,
+      _________, _________, _________,                       _________, _________, _________,                       _________, _________, _________, _________, _________
     ),
     /* SYMB
      * ,-----------------------------------------------------------------------.
@@ -136,10 +121,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * `-----------------------------------------------------------------------'
      */
     [_SYMB] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
-      _________, KC_F1,     KC_F2,     KC_F3,     KC_F4,     KC_F5,     KC_F6,     KC_F7,     KC_F8,     KC_F9,     KC_F10,    KC_F11,    KC_F12,               KC_BSPC,
-      _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
-      _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
-      _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
+      RECSTOP,   PLAY1,     PLAY2,     _________, _________, _________, _________, _________, _________, _________, REC1,      REC2,      _________,            _________,
+      _________,            TT(_MACR), TT(_LEDS), TT(_MDIA), TT(_PNTR), TT(_FKEY), TT(_FKEY), TT(_PNTR), TT(_MDIA), TT(_LEDS), TT(_MACR), _________, _________, _________,
+      _________,            KC_EXLM,   KC_AT,     KC_HASH,   KC_DLR,    KC_PERC,   KC_CIRC,   KC_AMPR,   KC_ASTR,   KC_LPRN,   KC_RPRN,   _________, _________,
+      _________,            KC_TILD,   KC_GRV,    KC_PLUS,   KC_EQL,    KC_PIPE,   KC_BSLS,   KC_LBRC,   KC_RBRC,   KC_LCBR,   KC_RCBR,   _________, _________, _________,
       _________, _________, _________,                       _________, _________, _________,                       _________, _________, _________, _________, _________
     ),
     [_MACR] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
@@ -150,24 +135,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       _________, _________, _________,                       _________, _________, _________,                       _________, _________, _________, _________, _________
     ),
     /*
-    //This layer is intended to be a layer where QWERTY is mirrored without any HOLD keys so any key can be eaisly repeated by holding down the key.
-
-    [_RPET] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
-      _________, KC_1,      KC_2,      KC_3,      KC_4,      KC_5,      KC_6,      KC_7,      KC_8,      KC_9,      KC_0,      KC_MINS,   KC_EQL,               KC_BSPC,
-      _________,            KC_Q,      KC_W,      KC_E,      KC_R,      KC_T,      KC_Y,      KC_U,      KC_I,      KC_O,      KC_P,      KC_LBRC,   KC_RBRC,   _________,
-      _________,            KC_A,      KC_S,      KC_D,      KC_F,      KC_G,      KC_H,      KC_J,      KC_K,      KC_L,      KC_SCLN,   KC_QUOT,   KC_ENT,
-      _________,            KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_N,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,   SHFT_BLS,  KC_UP,     _________,
-      _________, _________, _________,                       _________, _________, _________,                       _________, _________, _________, _________, _________
-    ),
-    */
-    /*
-    [_MACR] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
-      RECSTOP,              PLAY1,     PLAY2,     _________, _________, _________, _________, _________, _________, _________, REC1,      REC2,                 _________,
-      _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
+    [_TRAN] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
+      _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,            _________,
+      _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
       _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
       _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
-      _________, _________, _________,                       TD(TD_L23),TD(TD_L10),QWER,                            _________, _________, _________, _________, _________
-    )
+      _________, _________, _________,                       _________, _________, _________,                       _________, _________, _________, _________, _________
+    ),
     */
   };
 
@@ -187,6 +161,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
   if (record->event.pressed) { // KEY IS DOWN
     switch(keycode) {
+      case REC1: // Clear the layers so we can start recording
+        layer_clear();
+        return true;
+      case REC2: // Clear the layers so we can start recording
+          layer_clear();
+          return true;
       // LAYER SWITCHING
       case BASE:
         layer_clear();
@@ -194,7 +174,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
       case QWER:
         layer_clear();
-        dprintf("trying switch QWER: %d\n", keycode);
+        //dprintf("trying switch QWER: %d\n", keycode);
         persistent_default_layer_set(1UL<<_QWER);
         return false;
       /*
@@ -213,7 +193,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       */
       case FKEY:
         layer_on(_FKEY);
-        dprintf("trying switch FKEY: %d\n", keycode);
+        //dprintf("trying switch FKEY: %d\n", keycode);
         return false;
       case PNTR:
         layer_on(_PNTR);
@@ -233,7 +213,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         layer_on(_MDIA);
         return false;
       case RGB_DEF:
-        dprintf("SAVING NEW DEFAULTS FROM KEYPRESS");
+        //dprintf("SAVING NEW DEFAULTS FROM KEYPRESS");
         eeconfig_debug_rgblight();
         rgblight_startup_config.raw = eeconfig_read_rgblight();
         return false;
@@ -264,17 +244,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case VERS:
         SEND_STRING (QMK_KEYBOARD "/" QMK_KEYMAP ":v" KEYMAP_REV);
         return false;
-      case MAKE:
-        SEND_STRING ("make " QMK_KEYBOARD ":" QMK_KEYMAP);
-        return false;
       case TILSLSH:
         SEND_STRING ("~/.");
-        return false;
-      case DEREF:
-        SEND_STRING ("->");
-        return false;
-      case EQRIGHT:
-        SEND_STRING ("=>");
         return false;
       case EPRM:
         eeconfig_init();
@@ -323,15 +294,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   uint8_t tobright = 120;
 
   if (rgblight_entry_config.enable) {
-    printf("Lights were on testing need for adjustment .val = %u", rgblight_entry_config.val);
+    //printf("Lights were on testing need for adjustment .val = %u", rgblight_entry_config.val);
     // set a reasonable brightness increase adjustment as to not shock you with brightness increases (170 = 255, 20 = 30)
-    tobright = (rgblight_entry_config.val <= 170) ? ((rgblight_entry_config.val / 2) + rgblight_entry_config.val) : 255;
+    if (rgblight_entry_config.val > 0) {
+      tobright = (rgblight_entry_config.val <= 170) ? ((rgblight_entry_config.val / 2) + rgblight_entry_config.val) : 255;
+    }
   }
-  printf("Brightness value PRE:CUR %d:%d", rgblight_entry_config.val, tobright);
+  //printf("Brightness value PRE:CUR %d:%d", rgblight_entry_config.val, tobright);
 
   // don't change mode if we are currently static or breathing
   uint8_t mode = (rgblight_entry_config.mode <= 2) ? rgblight_entry_config.mode : 1 ;
-  printf("Mode value PRE:CUR %d:%d", rgblight_entry_config.mode, mode);
+  //printf("Mode value PRE:CUR %d:%d", rgblight_entry_config.mode, mode);
 
   switch (biton32(state)) {
     // Case seems to have to check from lowest to highest
@@ -389,9 +362,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
   return state;
 }
-#endif
+#endif // #RGBLIGHT_ENABLE
 
 #ifdef TAP_DANCE_ENABLE
+
+  void send_all_taps(uint16_t keycode, uint8_t multi) {
+    if (multi > 0) {
+      uint8_t presses = (multi / 2);
+      for (uint8_t i = 0; i < presses; i++) {
+        PRESS(keycode);
+        if (i == 15)  { break; } // watch for runaways ...
+      }
+    }
+  }
 
   // To activate SINGLE_HOLD, you will need to hold for 200ms first.
   // This tap dance favors keys that are used frequently in typing like 'f'
@@ -460,14 +443,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   };
 
   void tab_finished (qk_tap_dance_state_t *state, void *user_data) {
-    tab_state.state = cur_dance(state);
+    tab_state.state = hold_cur_dance(state);
     switch (tab_state.state) {
       case SINGLE_TAP:  register_code(KC_TAB); break;  //send tab on single press
       case SINGLE_HOLD: register_code(KC_LSFT); register_code(KC_LCTL); break;
       case DOUBLE_HOLD: register_code(KC_LCTL); register_code(KC_LALT); break; //alt shift on single hold
-      case DOUBLE_TAP:  register_code(KC_TAB);  register_code(KC_TAB); register_code(KC_TAB); break; //tab tab
-      case TRIPLE_TAP:  break;
+      case DOUBLE_TAP:  register_code(KC_TAB);  unregister_code(KC_TAB); register_code(KC_TAB); break; //tab tab
+      case TRIPLE_TAP:  register_code(KC_TAB);  unregister_code(KC_TAB); register_code(KC_TAB);  unregister_code(KC_TAB); register_code(KC_TAB);  break;
       case TRIPLE_HOLD: register_code(KC_LSFT); register_code(KC_LALT); break;
+      default: send_all_taps(KC_TAB, tab_state.state);
     }
   }
 
@@ -477,8 +461,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case SINGLE_HOLD: unregister_code(KC_LSFT); unregister_code(KC_LCTL); break;
       case DOUBLE_HOLD: unregister_code(KC_LCTL); unregister_code(KC_LALT); break; //let go of alt shift
       case DOUBLE_TAP:  unregister_code(KC_TAB); break;
-      case TRIPLE_TAP:  break;
+      case TRIPLE_TAP:  unregister_code(KC_TAB); break;
       case TRIPLE_HOLD: unregister_code(KC_LSFT); unregister_code(KC_LALT); break;
+      // default: break; // already sent all keycodes ...
     }
     tab_state.state = 0;
   }
@@ -497,11 +482,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     comma_state.state = hold_cur_dance(state); //Use the dance that favors being held
     switch (comma_state.state) {
       case SINGLE_TAP:  register_code(KC_COMMA); break;
-      case SINGLE_HOLD: layer_on(_FKEY); break;
+      case SINGLE_HOLD: layer_move(_FKEY); break;
       case DOUBLE_TAP:  layer_invert(_PNTR); break;
-      case DOUBLE_HOLD: layer_on(_SYMB); break;
+      case DOUBLE_HOLD: layer_move(_SYMB); break;
       case TRIPLE_TAP:  register_code(KC_CALCULATOR); break;
-      case TRIPLE_HOLD: layer_on(_MACR);
+      case TRIPLE_HOLD: layer_move(_MACR);
     }
   }
 
@@ -518,35 +503,35 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   /* ----------------------------------------------------
-  ***************  S1 tap toggle  ********************
+  ******************  CAPS toggle  ********************
   ---------------------------------------------------- */
 
   //Good example for accessing multiple layers from the same key.
-  static xtap S1_state = {
+  static xtap CAP_state = {
     .is_press_action = true,
     .state = 0
   };
 
-  void bt_finished (qk_tap_dance_state_t *state, void *user_data) {
-    S1_state.state = cur_dance(state);
-    switch (S1_state.state) {
-      case SINGLE_TAP:  register_code(KC_F3); break;
-      case SINGLE_HOLD: layer_on(_SYMB); break;
-      case DOUBLE_TAP:  layer_invert(_SYMB); break;
-      case DOUBLE_HOLD: layer_on(_PNTR); break;
-      case DOUBLE_SINGLE_TAP: layer_invert(_PNTR); break;
+  void cap_finished (qk_tap_dance_state_t *state, void *user_data) {
+    CAP_state.state = cur_dance(state);
+    switch (CAP_state.state) {
+      case SINGLE_TAP:  register_code(KC_ESC); break;
+      case SINGLE_HOLD: layer_move(_FKEY); break;
+      case DOUBLE_TAP:  layer_clear(); break; // Clear layers and return to BASE layer
+      case DOUBLE_HOLD: layer_move(_PNTR); break;
+      case DOUBLE_SINGLE_TAP: SEND_VERS break;
     }
   }
 
-  void bt_reset (qk_tap_dance_state_t *state, void *user_data) {
-    switch (S1_state.state) {
-      case SINGLE_TAP:  unregister_code(KC_F3); break;
-      case SINGLE_HOLD: layer_off(4); break;
-      case DOUBLE_TAP:  break; //already inverted. Don't do anything.
-      case DOUBLE_HOLD: layer_off(5); break;
+  void cap_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (CAP_state.state) {
+      case SINGLE_TAP:  unregister_code(KC_ESC); break;
+      case SINGLE_HOLD: layer_off(_FKEY); break;
+      case DOUBLE_TAP:  break;
+      case DOUBLE_HOLD: layer_off(_PNTR); break;
       case DOUBLE_SINGLE_TAP: break;
     }
-    S1_state.state = 0;
+    CAP_state.state = 0;
   }
 
   /* ----------------------------------------------------
@@ -584,4 +569,179 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     ttt_state.state = 0;
   }
 
-#endif
+  /* ----------------------------------------------------
+  *************** RCTL tap toggle *******************
+  ---------------------------------------------------- */
+
+  //Good example for accessing multiple layers from the same key.
+  static xtap RCTL_state = {
+    .is_press_action = true,
+    .state = 0
+  };
+
+  void rctl_finished (qk_tap_dance_state_t *state, void *user_data) {
+    RCTL_state.state = cur_dance(state);
+    switch (RCTL_state.state) {
+      case SINGLE_TAP:  layer_move(_LEDS); break;
+      case SINGLE_HOLD: register_code(KC_RCTL); break;
+    }
+  }
+
+  void rctl_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (RCTL_state.state) {
+      case SINGLE_TAP:  break;
+      case SINGLE_HOLD: unregister_code(KC_RCTL); break;
+    }
+    RCTL_state.state = 0;
+  }
+
+  /* ----------------------------------------------------
+  *****************  TAP TEMPLATE tap  ****************
+  ---------------------------------------------------- */
+
+  //Good example for accessing multiple layers from the same key.
+  static xtap BSLH_state = {
+    .is_press_action = true,
+    .state = 0
+  };
+
+  void bslh_finished (qk_tap_dance_state_t *state, void *user_data) {
+    BSLH_state.state = cur_dance(state);
+    switch (BSLH_state.state) {
+      case SINGLE_TAP:  reset_keyboard(); break;
+      case SINGLE_HOLD: layer_move(_SYMB); break;
+    }
+  }
+
+  void bslh_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (BSLH_state.state) {
+      case SINGLE_TAP:  break;
+      case SINGLE_HOLD: layer_off(_SYMB); break;
+    }
+    BSLH_state.state = 0;
+  }
+
+  /* ----------------------------------------------------
+  *****************  GUI tap  ****************
+  ---------------------------------------------------- */
+
+  //Good example for accessing multiple layers from the same key.
+  static xtap GUI_state = {
+    .is_press_action = true,
+    .state = 0
+  };
+
+  void gui_finished (qk_tap_dance_state_t *state, void *user_data) {
+    GUI_state.state = cur_dance(state);
+    switch (GUI_state.state) {
+      case SINGLE_TAP:  register_code(KC_LGUI); break;
+      case SINGLE_HOLD: register_code(KC_LGUI); break;
+      case DOUBLE_TAP:  SEND_STRING("DOUBLE_TAP"); break;
+      case DOUBLE_HOLD: SEND_STRING("DOUBLE_HOLD"); break;
+      case DOUBLE_SINGLE_TAP: SEND_STRING("DOUBLE_SINGLE_TAP"); break;
+    }
+  }
+
+  void gui_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (GUI_state.state) {
+      case SINGLE_TAP:  unregister_code(KC_LGUI); break;
+      case SINGLE_HOLD: unregister_code(KC_LGUI); break;
+      case DOUBLE_TAP:  break;
+      case DOUBLE_HOLD: break;
+      case DOUBLE_SINGLE_TAP: break;
+    }
+    GUI_state.state = 0;
+  }
+
+  /* ----------------------------------------------------
+  *************** LCTL tap toggle *******************
+  ---------------------------------------------------- */
+
+  //Good example for accessing multiple layers from the same key.
+  static xtap LCTL_state = {
+    .is_press_action = true,
+    .state = 0
+  };
+
+  void lctl_finished (qk_tap_dance_state_t *state, void *user_data) {
+    LCTL_state.state = cur_dance(state);
+    switch (LCTL_state.state) {
+      case SINGLE_TAP:  SEND_STRING("SINGLE_TAP"); break;
+      case SINGLE_HOLD: SEND_STRING("SINGLE_HOLD"); break;
+      case DOUBLE_TAP:  SEND_STRING("DOUBLE_TAP"); break;
+      case DOUBLE_HOLD: SEND_STRING("DOUBLE_HOLD"); break;
+      case DOUBLE_SINGLE_TAP: SEND_STRING("DOUBLE_SINGLE_TAP"); break;
+    }
+  }
+
+  void lctl_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (LCTL_state.state) {
+      case SINGLE_TAP:  break;
+      case SINGLE_HOLD: break;
+      case DOUBLE_TAP:  break;
+      case DOUBLE_HOLD: break;
+      case DOUBLE_SINGLE_TAP: break;
+    }
+    LCTL_state.state = 0;
+  }
+
+  /* ----------------------------------------------------
+  *************** LSFT tap toggle *******************
+  ---------------------------------------------------- */
+
+  static xtap LSFT_state = {
+    .is_press_action = true,
+    .state = 0
+  };
+
+  void lsft_finished (qk_tap_dance_state_t *state, void *user_data) {
+    LSFT_state.state = hold_cur_dance(state);
+    switch (LSFT_state.state) {
+      case SINGLE_TAP: set_oneshot_layer(_SYMB, ONESHOT_START); break;
+      case SINGLE_HOLD: register_code(KC_LSFT); break;
+      default: register_code(KC_LSFT);
+    }
+  }
+
+  void lsft_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (LSFT_state.state) {
+      case SINGLE_TAP: clear_oneshot_layer_state(ONESHOT_PRESSED); break;
+      case SINGLE_HOLD: unregister_code(KC_LSFT); break;
+      default: unregister_code(KC_LSFT);
+    }
+    LSFT_state.state = 0;
+  }
+
+  /* ----------------------------------------------------
+  *****************  TAP TEMPLATE tap  ****************
+  ---------------------------------------------------- */
+  /*
+  //Good example for accessing multiple layers from the same key.
+  static xtap S1_state = {
+    .is_press_action = true,
+    .state = 0
+  };
+
+  void bt_finished (qk_tap_dance_state_t *state, void *user_data) {
+    S1_state.state = cur_dance(state);
+    switch (S1_state.state) {
+      case SINGLE_TAP:  register_code(KC_F3); break;
+      case SINGLE_HOLD: layer_on(_SYMB); break;
+      case DOUBLE_TAP:  layer_invert(_SYMB); break;
+      case DOUBLE_HOLD: layer_on(_PNTR); break;
+      case DOUBLE_SINGLE_TAP: layer_invert(_PNTR); break;
+    }
+  }
+
+  void bt_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (S1_state.state) {
+      case SINGLE_TAP:  unregister_code(KC_F3); break;
+      case SINGLE_HOLD: layer_off(4); break;
+      case DOUBLE_TAP:  break; //already inverted. Don't do anything.
+      case DOUBLE_HOLD: layer_off(5); break;
+      case DOUBLE_SINGLE_TAP: break;
+    }
+    S1_state.state = 0;
+  }
+  */
+#endif // #TAP_DANCE_ENABLE
