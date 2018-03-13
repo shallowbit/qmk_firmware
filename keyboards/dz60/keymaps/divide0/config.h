@@ -44,7 +44,6 @@
 #define RGB_DI_PIN E2
 #define RGBLED_NUM 16
 
-#define RGBLIGHT_ANIMATIONS
 #ifdef RGBLIGHT_ANIMATIONS
   #define RGBLIGHT_HUE_STEP 8
   #define RGBLIGHT_SAT_STEP 8
@@ -87,13 +86,9 @@
 // #define GRAVE_ESC_GUI_OVERRIDE   // if GUI is pressed, ESC is always sent
 // #define GRAVE_ESC_SHIFT_OVERRIDE // if SHIFT is pressed, ESC is always sent
 
-/* prevent stuck modifiers */
-/* supposed to release all mods when switching layers? */
-#define PREVENT_STUCK_MODIFIERS
-
-// #define NO_DEBUG
-// #define NO_PRINT
-// #define USER_PRINT
+#define NO_DEBUG
+#define NO_PRINT
+#define USER_PRINT
 
 // #define NO_ACTION_LAYER
 // #define NO_ACTION_TAPPING
@@ -101,6 +96,8 @@
 // #define NO_ACTION_MACRO
 // #define NO_ACTION_FUNCTION
 
+#undef RGBLIGHT_ANIMATIONS
+#define PREVENT_STUCK_MODIFIERS
 #define DYNAMIC_MACRO_SIZE 128
 #define TAPPING_TERM 300
 // #define RETRO_TAPPING // tap anyway, even after TAPPING_TERM, if there was no other key interruption between press and release

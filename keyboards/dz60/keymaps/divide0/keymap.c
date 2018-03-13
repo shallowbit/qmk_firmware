@@ -1,14 +1,10 @@
 #include "dz60.h"
 #include "divide0.h"
-//#include "eeconfig.h"
 #include "dynamic_macro.h"
-//#include "version.h"
-//#include "print.h"
+#include "print.h"
 #ifdef MOUSEKEY_ENABLE
   #include "mousekey.h"
 #endif
-
-#define KEYMAP_REV "1.20"
 
 //Tap Dance Definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
@@ -242,7 +238,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       #endif
       // EVERTYIHNG ELSE
       case VERS:
-        SEND_STRING (QMK_KEYBOARD "/" QMK_KEYMAP ":v" KEYMAP_REV);
+        SEND_VERS;
         return false;
       case TILSLSH:
         SEND_STRING ("~/.");
@@ -370,8 +366,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (multi > 0) {
       uint8_t presses = (multi / 2);
       for (uint8_t i = 0; i < presses; i++) {
-        PRESS(keycode);
-        if (i == 15)  { break; } // watch for runaways ...
+        xprintf("presses: %d \r\n", presses);
+        register_code(keycode);
+        unregister_code(keycode);
+        if (i > 15)  { return; } // watch for runaways ...
       }
     }
   }
@@ -519,7 +517,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case SINGLE_HOLD: layer_move(_FKEY); break;
       case DOUBLE_TAP:  layer_clear(); break; // Clear layers and return to BASE layer
       case DOUBLE_HOLD: layer_move(_PNTR); break;
-      case DOUBLE_SINGLE_TAP: SEND_VERS break;
+      case DOUBLE_SINGLE_TAP: SEND_VERS; break;
     }
   }
 

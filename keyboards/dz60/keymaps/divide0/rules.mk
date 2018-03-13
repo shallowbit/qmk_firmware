@@ -54,10 +54,30 @@ OPT_DEFS += -DBOOTLOADER_SIZE=4096
 #OPT_DEFS := $(filter-out -DCONSOLE_ENABLE,$(OPT_DEFS))
 
 
+KEYMAP_VERSION = $(shell \
+ if [ -d "${KEYMAP_PATH}/.git" ]; then \
+  cd "${KEYMAP_PATH}" && git describe --abbrev=6 --dirty --always --tags --match 'v*' 2>/dev/null; \
+ else \
+  out=$(git describe --abbrev=6 --dirty --always --tags --match 'v*'); \
+  if [ "${out}" == "" ]; then \
+    echo QMK; \
+  else \
+    echo "${out}"; \
+  fi \
+ fi)
+
+KEYMAP_BRANCH = $(shell \
+ if [ -d "${KEYMAP_PATH}/.git" ]; then \
+  cd "${KEYMAP_PATH}"; \
+ fi; \
+ git rev-parse --abbrev-ref HEAD 2>/dev/null)
+
+OPT_DEFS += -DKEYMAP_VERSION=\"$(KEYMAP_VERSION)\\\#$(KEYMAP_BRANCH)\"
+
 BOOTMAGIC_ENABLE = no	   # Virtual DIP switch configuration(+1000)
 MOUSEKEY_ENABLE = yes    # Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes	   # Audio control and System control(+450)
-CONSOLE_ENABLE = no	    # Console for debug(+400)
+CONSOLE_ENABLE = yes	    # Console for debug(+400)
 COMMAND_ENABLE = no      # Commands for debug and configuration
 NKRO_ENABLE = yes		     # USB Nkey Rollover - if this doesn't work, see here: https://github.com/tmk/tmk_keyboard/wiki/FAQ#nkro-doesnt-work
 RGBLIGHT_ENABLE = yes    # Pretty lights!

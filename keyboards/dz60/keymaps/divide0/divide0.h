@@ -150,7 +150,7 @@ enum tap_types {
 #define XXXXXXX KC_NO
 #define PRESS(kc)   register_code(kc)
 #define RELEASE(kc) unregister_code(kc)
-#define SEND_VERS SEND_STRING(QMK_KEYBOARD "/" QMK_KEYMAP ":v" KEYMAP_REV);
+#define SEND_VERS SEND_STRING(QMK_KEYBOARD "/" QMK_KEYMAP ":v" KEYMAP_VERSION)
 // KEY MACROS
 #define MYCUT     RCTL(KC_X) // -------------------- Edits x,c,v,z
 #define MYCOPY    RCTL(KC_C)
