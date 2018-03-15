@@ -1,8 +1,14 @@
 enum map_layers {
   _QWER = 0,
+  #ifdef LAYOUT_COLEMAK
   _COLE = 1,  // 1
+  #endif
+  #ifdef LAYOUT_WORKMAN
   _WORK = 2,  // 2
+  #endif
+  #ifdef LAYOUT_DVORAK
   _DVOR = 3,  // 3
+  #endif
   _FKEY = 11, // 11 RAISE?
   _PNTR = 12, // 12 LOWER?
   _LEDS = 13, // 13 ADJUST?
@@ -46,7 +52,7 @@ enum map_dances {
   TTT = 0,
   BSLHT,
   CAPT,
-  CMMT,
+  ENTT,
   TABT,
   GUIT,
   LSFTT,

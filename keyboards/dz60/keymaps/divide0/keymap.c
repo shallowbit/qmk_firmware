@@ -14,7 +14,7 @@ qk_tap_dance_action_t tap_dance_actions[] = {
   [TTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, ttt_finished, ttt_reset),
   [BSLHT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, bslh_finished, bslh_reset),
   [CAPT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, cap_finished, cap_reset),
-  [CMMT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, comma_finished, comma_reset),
+  [ENTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, ent_finished, ent_reset),
   [TABT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, tab_finished, tab_reset),
   [GUIT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, gui_finished, gui_reset),
   [LSFTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lsft_finished, lsft_reset),
@@ -48,8 +48,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWER] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
   		KC_GESC,   KC_1,      KC_2,      KC_3,      KC_4,      KC_5,      KC_6,      KC_7,      KC_8,      KC_9,      KC_0,      KC_MINS,   KC_EQL,               KC_BSPC,
   		TD(TABT),             KC_Q,      KC_W,      KC_E,      KC_R,      KC_T,      KC_Y,      KC_U,      KC_I,      KC_O,      KC_P,      KC_LBRC,   KC_RBRC,   TD(BSLHT),
-  		TD(CAPT),             KC_A,      KC_S,      KC_D,      KC_F,      KC_G,      KC_H,      KC_J,      KC_K,      KC_L,      KC_SCLN,   KC_QUOT,   KC_ENT,
-  		TD(LSFTT),            KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_N,      KC_M,      TD(CMMT),  KC_DOT,    KC_SLSH,   SHFT_BLS,  KC_UP,      BASE,
+  		TD(CAPT),             KC_A,      KC_S,      KC_D,      KC_F,      KC_G,      KC_H,      KC_J,      KC_K,      KC_L,      KC_SCLN,   KC_QUOT,   TD(ENTT),
+  		TD(LSFTT),            KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_N,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,   SHFT_BLS,  KC_UP,      KC_DEL,
   		KC_LCTL,   TD(GUIT),  KC_LALT,                         KC_SPACE,  TD(TTT),   KC_SPACE,                        KC_HOME,   KC_END,    KC_LEFT,   KC_DOWN,    KC_RIGHT
     ),
     /*
@@ -79,23 +79,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_FKEY] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
       _________, KC_F1,     KC_F2,     KC_F3,     KC_F4,     KC_F5,     KC_F6,     KC_F7,     KC_F8,     KC_F9,     KC_F10,    KC_F11,    KC_F12,               KC_BSPC,
       _________,            ASLEFT,    ALEFT,     ARIGHT,    ASRIGHT,   KC_WH_U,   MYCOPY,    KC_HOME,   KC_PGUP,   KC_END,    MYPASTE,   _________, _________, RESET,
-      _________,            CSLEFT,    CLEFT,     CRIGHT,    CSRIGHT,   _________, KC_LEFT,   KC_DOWN,   KC_UP,     KC_RIGHT,  _________, _________, KC_ENT,
+      _________,            CSLEFT,    CLEFT,     CRIGHT,    CSRIGHT,   _________, KC_LEFT,   KC_DOWN,   KC_UP,     KC_RIGHT,  _________, _________, _________,
       _________,            MYUNDO,    MYCUT,     MYCOPY,    MYPASTE,   KC_WH_D,   _________, CLEFT,     KC_PGDN,   CRIGHT,    MYREDO,    _________, KC_PGUP,   _________,
-      _________, _________, _________,                       KC_SPACE,  TD(TTT),   KC_SPACE,                        _________, _________, KC_HOME,   KC_PGDN,   KC_END
+      _________, _________, _________,                       _________, _________, _________,                       _________, _________, KC_HOME,   KC_PGDN,   KC_END
     ),
     [_PNTR] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
    		_________, KC_BTN1,   KC_BTN2,   KC_BTN3,   KC_BTN4,   KC_BTN5,   _________, _________, _________, _________, _________, _________, _________,            _________,
   		_________,            _________, KC_BTN1,   KC_MS_U,   KC_BTN2,   KC_WH_U,   KC_WH_U,   KC_BTN1,   KC_MS_U,   KC_BTN2,   _________, _________, _________, RESET,
   		_________,            _________, KC_MS_L,   KC_MS_D,   KC_MS_R,   KC_WH_D,   KC_WH_D,   KC_MS_L,   KC_MS_D,   KC_MS_R,   _________, _________, _________,
   		_________,            _________, KC_ACL0,   KC_ACL1,   KC_ACL2,   _________, _________, KC_ACL0,   KC_ACL1,   KC_ACL2,   _________, _________, _________, _________,
-  		_________, _________, _________,                       KC_SPACE,  TD(TTT),   KC_SPACE,                        _________, _________, _________, _________, _________
+  		_________, _________, _________,                       _________, _________, _________,                       _________, _________, _________, _________, _________
     ),
   	[_LEDS] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
    		_________, RGB_M_P,   RGB_M_B,   RGB_M_R,   RGB_M_SW,  RGB_M_SN,  RGB_M_K,   RGB_M_X,   RGB_M_G,   _________, _________, RGB_RMOD,  RGB_MOD,              RGB_TOG,
   		_________,            RGB_HUI,   RGB_SAI,   RGB_VAI,   _________, _________, _________, _________, _________, _________, _________, KC_SLEP,   KC_WAKE,   RESET,
   		_________,            RGB_HUD,   RGB_SAD,   RGB_VAD,   _________, _________, _________, _________, _________, _________, KC_MPRV,   KC_MNXT,   RGB_DEF,
       _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, KC_VOLU,   _________,
-  		_________, _________, _________,                       KC_SPACE,  TD(TTT),   KC_SPACE,                        _________, _________, KC_MSTP,   KC_VOLD,   KC_MPLY
+  		_________, _________, _________,                       _________, _________, _________,                       _________, _________, KC_MSTP,   KC_VOLD,   KC_MPLY
     ),
     //This layer is intended to be a layer where QWERTY is mirrored without any HOLD keys so any key can be eaisly repeated by holding down the key.
   	[_MDIA] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
@@ -366,7 +366,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (multi > 0) {
       uint8_t presses = (multi / 2);
       for (uint8_t i = 0; i < presses; i++) {
-        xprintf("presses: %d \r\n", presses);
+        //xprintf("presses: %d \r\n", presses);
         register_code(keycode);
         unregister_code(keycode);
         if (i > 15)  { return; } // watch for runaways ...
@@ -467,19 +467,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   /* ----------------------------------------------------
-  *****************  Super Comma *********************
+  *****************  Enter Tap ***********************
   ---------------------------------------------------- */
 
   // // Assumption: we don't care about trying to hit ,, quickly
-  static xtap comma_state = {
+  static xtap ent_state = {
     .is_press_action = true,
     .state = 0
   };
 
-  void comma_finished (qk_tap_dance_state_t *state, void *user_data) {
-    comma_state.state = hold_cur_dance(state); //Use the dance that favors being held
-    switch (comma_state.state) {
-      case SINGLE_TAP:  register_code(KC_COMMA); break;
+  void ent_finished (qk_tap_dance_state_t *state, void *user_data) {
+    ent_state.state = cur_dance(state); //Use the dance that favors being held
+    switch (ent_state.state) {
+      case SINGLE_TAP:  register_code(KC_ENTER); break;
       case SINGLE_HOLD: layer_move(_FKEY); break;
       case DOUBLE_TAP:  layer_invert(_PNTR); break;
       case DOUBLE_HOLD: layer_move(_SYMB); break;
@@ -488,16 +488,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
   }
 
-  void comma_reset (qk_tap_dance_state_t *state, void *user_data) {
-    switch (comma_state.state) {
-      case SINGLE_TAP:  unregister_code(KC_COMMA); break; //unregister comma
+  void ent_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (ent_state.state) {
+      case SINGLE_TAP:  unregister_code(ENTER); break; //unregister comma
       case SINGLE_HOLD: layer_off(_FKEY); break;
       case DOUBLE_TAP:  break;
       case DOUBLE_HOLD: layer_off(_SYMB); break;
       case TRIPLE_TAP:  unregister_code(KC_CALCULATOR); break;
       case TRIPLE_HOLD: layer_off(_MACR);
     }
-    comma_state.state = 0;
+    ent_state.state = 0;
   }
 
   /* ----------------------------------------------------
@@ -684,7 +684,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   /* ----------------------------------------------------
-  *************** LSFT tap toggle *******************
+  // *************** LSFT tap toggle *******************
   ---------------------------------------------------- */
 
   static xtap LSFT_state = {
