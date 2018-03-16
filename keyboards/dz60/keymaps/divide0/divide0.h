@@ -1,13 +1,17 @@
+//#define LAYOUT_COLEMAK
+// #define LAYOUT_WORKMAN
+// #define LAYOUT_DVORAK
+
 enum map_layers {
   _QWER = 0,
   #ifdef LAYOUT_COLEMAK
-  _COLE = 1,  // 1
+  _COLE,
   #endif
   #ifdef LAYOUT_WORKMAN
-  _WORK = 2,  // 2
+  _WORK,
   #endif
   #ifdef LAYOUT_DVORAK
-  _DVOR = 3,  // 3
+  _DVOR,
   #endif
   _FKEY = 11, // 11 RAISE?
   _PNTR = 12, // 12 LOWER?
@@ -78,6 +82,10 @@ enum tap_types {
     bool is_press_action;
     int state;
   } xtap;
+
+  typedef struct {
+    int state;
+  } stap;
 #endif
 
 #ifdef RGBLIGHT_ENABLE
@@ -111,23 +119,16 @@ enum tap_types {
 #endif
 
 #ifdef TAP_DANCE_ENABLE
-
   void send_all_taps(uint16_t keycode, uint8_t multi);
-
   int cur_dance (qk_tap_dance_state_t *state);
   int hold_cur_dance (qk_tap_dance_state_t *state);
 
-  void x_finished (qk_tap_dance_state_t *state, void *user_data);
-  void x_reset (qk_tap_dance_state_t *state, void *user_data);
-
-  void h_finished (qk_tap_dance_state_t *state, void *user_data);
-  void h_reset (qk_tap_dance_state_t *state, void *user_data);
-
   void tab_finished (qk_tap_dance_state_t *state, void *user_data);
+  void tab_every (qk_tap_dance_state_t *state, void *user_data);
   void tab_reset (qk_tap_dance_state_t *state, void *user_data);
 
-  void comma_finished (qk_tap_dance_state_t *state, void *user_data);
-  void comma_reset (qk_tap_dance_state_t *state, void *user_data);
+  void ent_finished (qk_tap_dance_state_t *state, void *user_data);
+  void ent_reset (qk_tap_dance_state_t *state, void *user_data);
 
   void bslh_finished (qk_tap_dance_state_t *state, void *user_data);
   void bslh_reset (qk_tap_dance_state_t *state, void *user_data);
@@ -186,7 +187,7 @@ enum tap_types {
 #define PSCR      KC_PSCREEN // ---------------------------- Misc.
 #define CAD       LCTL(LALT(KC_DEL))
 #define TASK      LCTL(LSFT(KC_ESC))
-#define REC1 DYN_REC_START1 // ------------------------- Macros
+#define REC1 DYN_REC_START1 // ---------------------------- Macros
 #define REC2 DYN_REC_START2
 #define PLAY1 DYN_MACRO_PLAY1
 #define PLAY2 DYN_MACRO_PLAY2

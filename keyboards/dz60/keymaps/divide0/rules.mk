@@ -43,7 +43,7 @@ OPT_DEFS += -DBOOTLOADER_SIZE=4096
 #   comment out to disable the options.
 #
 
-+EXTRAFLAGS+=-flto
++EXTRAFLAGS+=-flto -Os
 # make EXTRAFLAGS=-E # dont compile just check code
 
 # debug-on
@@ -56,15 +56,9 @@ OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
 KEYMAP_VERSION = $(shell \
  if [ -d "${KEYMAP_PATH}/.git" ]; then \
-  cd "${KEYMAP_PATH}" && git describe --abbrev=6 --dirty --always --tags --match 'v*' 2>/dev/null; \
- else \
-  out=$(git describe --abbrev=6 --dirty --always --tags --match 'v*'); \
-  if [ "${out}" == "" ]; then \
-    echo QMK; \
-  else \
-    echo "${out}"; \
-  fi \
- fi)
+  cd "${KEYMAP_PATH}"; \
+ fi; \
+ git describe --abbrev=6 --dirty --always --tags --match 'v*' 2>/dev/null)
 
 KEYMAP_BRANCH = $(shell \
  if [ -d "${KEYMAP_PATH}/.git" ]; then \
@@ -75,7 +69,7 @@ KEYMAP_BRANCH = $(shell \
 OPT_DEFS += -DKEYMAP_VERSION=\"$(KEYMAP_VERSION)\\\#$(KEYMAP_BRANCH)\"
 
 BOOTMAGIC_ENABLE = no	   # Virtual DIP switch configuration(+1000)
-MOUSEKEY_ENABLE = yes    # Mouse keys(+4700)
+MOUSEKEY_ENABLE = no    # Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes	   # Audio control and System control(+450)
 CONSOLE_ENABLE = yes	    # Console for debug(+400)
 COMMAND_ENABLE = no      # Commands for debug and configuration

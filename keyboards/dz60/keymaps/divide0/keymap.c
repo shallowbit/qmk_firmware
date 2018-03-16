@@ -15,7 +15,7 @@ qk_tap_dance_action_t tap_dance_actions[] = {
   [BSLHT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, bslh_finished, bslh_reset),
   [CAPT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, cap_finished, cap_reset),
   [ENTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, ent_finished, ent_reset),
-  [TABT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, tab_finished, tab_reset),
+  [TABT] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(tab_every, tab_finished, tab_reset, 600),
   [GUIT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, gui_finished, gui_reset),
   [LSFTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lsft_finished, lsft_reset),
 //[LCTLT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lctl_finished, lctl_reset),
@@ -52,29 +52,33 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   		TD(LSFTT),            KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_N,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,   SHFT_BLS,  KC_UP,      KC_DEL,
   		KC_LCTL,   TD(GUIT),  KC_LALT,                         KC_SPACE,  TD(TTT),   KC_SPACE,                        KC_HOME,   KC_END,    KC_LEFT,   KC_DOWN,    KC_RIGHT
     ),
-    /*
+    #ifdef LAYOUT_COLEMAK
      [_COLE] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
       KC_ESC,    KC_1,      KC_2,      KC_3,      KC_4,      KC_5,      KC_6,      KC_7,      KC_8,      KC_9,      KC_0,      KC_MINS,   KC_EQL,               KC_BSPC,
       KC_TAB,               KC_Q,      KC_W,      KC_F,      KC_P,      KC_G,      KC_J,      KC_L,      KC_U,      KC_Y,      KC_SCLN,   KC_LBRC,   KC_RBRC,   RESET,
       KC_LCTL,              KC_A,      KC_R,      KC_S,      KC_T,      KC_D,      KC_H,      KC_N,      KC_E,      KC_I,      KC_O,      KC_QUOT,   KC_ENT,
-      KC_LSFT,              KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_K,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,   KC_BSLS,   KC_UP,     MO(_FN),
-  		KC_LCTL,   KC_LGUI,   KC_LALT,                         TD_L23,    TD_L10,    TD_L45,                          MO(_RGB),  MO(_RST),  KC_LEFT,   KC_DOWN,   KC_RIGHT
+      KC_LSFT,              KC_Z,      KC_X,      KC_C,      KC_V,      KC_B,      KC_K,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,   KC_BSLS,   KC_UP,     KC_DEL,
+  		KC_LCTL,   TD(GUIT),  KC_LALT,                         KC_SPACE,  TD(TTT),   KC_SPACE,                        KC_HOME,   KC_END,    KC_LEFT,   KC_DOWN,   KC_RIGHT
     ),
+    #endif // LAYOUT_COLEMAK
+    #ifdef LAYOUT_WORKMAN
     [_WORK] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
       KC_ESC,    KC_1,      KC_2,      KC_3,      KC_4,      KC_5,      KC_6,      KC_7,      KC_8,      KC_9,      KC_0,      KC_MINS,   KC_EQL,               KC_BSPC,
       KC_TAB,               KC_Q,      KC_D,      KC_R,      KC_W,      KC_B,      KC_J,      KC_F,      KC_U,      KC_P,      KC_SCLN,   KC_LBRC,   KC_RBRC,   RESET,
-      KC_LC TL,             KC_A,      KC_ S,     KC_H,      KC_T,      KC_G,      KC_Y,      KC_N,      KC_E,      KC_O,      KC_I,      KC_QUOT,   KC_ENT,
-      KC_LSFT,              KC_Z,      KC_X,      KC_M,      KC_C,      KC_V,      KC_K,      KC_L,      KC_COMM,   KC_DOT,    KC_SLSH,   KC_BSLS,   KC_UP,     MO(_FN),
-  		KC_LCTL,   KC_LGUI,   KC_LALT,                         TD_L23,    TD_L10,    TD_L45,                          MO(_RGB),  MO(_RST),  KC_LEFT,   KC_DOWN,   KC_RIGHT
+      KC_LCTL,              KC_A,      KC_S,      KC_H,      KC_T,      KC_G,      KC_Y,      KC_N,      KC_E,      KC_O,      KC_I,      KC_QUOT,   KC_ENT,
+      KC_LSFT,              KC_Z,      KC_X,      KC_M,      KC_C,      KC_V,      KC_K,      KC_L,      KC_COMM,   KC_DOT,    KC_SLSH,   KC_BSLS,   KC_UP,     KC_DEL,
+  		KC_LCTL,   TD(GUIT),  KC_LALT,                         KC_SPACE,  TD(TTT),   KC_SPACE,                        KC_HOME,   KC_END,    KC_LEFT,   KC_DOWN,   KC_RIGHT
     ),
+    #endif // LAYOUT_WORKMAN
+    #ifdef LAYOUT_DVORAK
     [_DVOR] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
-      KC_ESC,    KC_ 1,     KC_2 ,     KC _3,     K C_4,     KC_5,      KC_6,      KC_7,      KC_8,      KC_9,      KC_0,      KC_LBRC,   KC_RBRC,              KC_BSPC,
+      KC_ESC,    KC_1,      KC_2 ,     KC_3,      KC_4,      KC_5,      KC_6,      KC_7,      KC_8,      KC_9,      KC_0,      KC_LBRC,   KC_RBRC,              KC_BSPC,
       KC_TAB,               KC_QUOT,   KC_COMM,   KC_DOT,    KC_P,      KC_Y,      KC_F,      KC_G,      KC_C,      KC_R,      KC_L,      KC_SLSH,   KC_EQL,    RESET,
       KC_LCTL,              KC_A,      KC_O,      KC_E,      KC_U,      KC_I,      KC_D,      KC_H,      KC_T,      KC_N,      KC_S,      KC_MINS,   KC_ENT,
-      KC_LSFT,              KC_SCLN,   KC_Q,      KC_J,      KC_K,      KC_X,      KC_B,      KC_M,      KC_W,      KC_V,      KC_Z,      KC_BSLS,   KC_UP,     MO(_FN),
-      KC_LCTL,   KC_LGUI,   KC_LALT,                         TD_L23,    TD_L10,    TD_L45,                          MO(_RGB),  MO(_RST),  KC_LEFT,   KC_DOWN,   KC_RIGHT
+      KC_LSFT,              KC_SCLN,   KC_Q,      KC_J,      KC_K,      KC_X,      KC_B,      KC_M,      KC_W,      KC_V,      KC_Z,      KC_BSLS,   KC_UP,     KC_DEL,
+      KC_LCTL,   TD(GUIT),  KC_LALT,                         KC_SPACE,  TD(TTT),   KC_SPACE,                        KC_HOME,   KC_END,    KC_LEFT,   KC_DOWN,   KC_RIGHT
     ),
-    */
+    #endif // LAYOUT_DVORAK
     // LEFT:WORDS + EDITS | RIGHT:FKEYS + MOVEMENTS
     [_FKEY] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
       _________, KC_F1,     KC_F2,     KC_F3,     KC_F4,     KC_F5,     KC_F6,     KC_F7,     KC_F8,     KC_F9,     KC_F10,    KC_F11,    KC_F12,               KC_BSPC,
@@ -130,15 +134,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
       _________, _________, _________,                       _________, _________, _________,                       _________, _________, _________, _________, _________
     ),
-    /*
-    [_TRAN] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
-      _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,            _________,
-      _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
-      _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
-      _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
-      _________, _________, _________,                       _________, _________, _________,                       _________, _________, _________, _________, _________
-    ),
-    */
+    // [_LOCK] = KEYMAP_2U_SHIFT_BACKSPACE_DIRECTIONAL(
+    //   _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,            _________,
+    //   _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
+    //   _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
+    //   _________,            _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________, _________,
+    //   _________, _________, _________,                       _________, _________, _________,                       _________, _________, _________, _________, _________
+    // ),
   };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -163,6 +165,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case REC2: // Clear the layers so we can start recording
           layer_clear();
           return true;
+      case RGB_DEF:
+        //dprintf("SAVING NEW DEFAULTS FROM KEYPRESS");
+        //eeconfig_debug_rgblight();
+        rgblight_startup_config.raw = eeconfig_read_rgblight();
+        return false;
       // LAYER SWITCHING
       case BASE:
         layer_clear();
@@ -173,20 +180,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         //dprintf("trying switch QWER: %d\n", keycode);
         persistent_default_layer_set(1UL<<_QWER);
         return false;
-      /*
-      case COLE:
-        layer_clear();
-        persistent_default_layer_set(1UL<<_COLE);
-        return false;
-      case WORK:
-        layer_clear();
-        persistent_default_layer_set(1UL<<_WORK);
-        return false;
-      case DVOR:
-        layer_clear();
-        persistent_default_layer_set(1UL<<_DVOR);
-        return false;
-      */
+      #ifdef LAYOUT_COLEMAK
+        case COLE:
+          layer_clear();
+          persistent_default_layer_set(1UL<<_COLE);
+          return false;
+      #endif // LAYOUT_COLEMAK
+      #ifdef LAYOUT_WORKMAN
+        case WORK:
+          layer_clear();
+          persistent_default_layer_set(1UL<<_WORK);
+          return false;
+      #endif // LAYOUT_WORKMAN
+      #ifdef LAYOUT_DVORAK
+        case DVOR:
+          layer_clear();
+          persistent_default_layer_set(1UL<<_DVOR);
+          return false;
+      #endif // LAYOUT_DVORAK
       case FKEY:
         layer_on(_FKEY);
         //dprintf("trying switch FKEY: %d\n", keycode);
@@ -208,11 +219,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case MDIA:
         layer_on(_MDIA);
         return false;
-      case RGB_DEF:
-        //dprintf("SAVING NEW DEFAULTS FROM KEYPRESS");
-        eeconfig_debug_rgblight();
-        rgblight_startup_config.raw = eeconfig_read_rgblight();
+      // EVERTYIHNG ELSE
+      case VERS:
+        SEND_VERS;
         return false;
+      case TILSLSH:
+        SEND_STRING ("~/.");
+        return false;
+      case EPRM:
+        eeconfig_init();
+        return false;
+      // RGB CHANGES
+      // case DEBUG:
+      //   debug_enable = true;
+      //   print("DEBUG: enabled.\n");
+      //   return false;
       // MOUSE MOVEMENTS
       #ifdef MOUSEKEY_ENABLE
       case A_MUL:
@@ -235,45 +256,57 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         mousekey_on(KC_MS_RIGHT);
         mousekey_send();
         return false;
-      #endif
-      // EVERTYIHNG ELSE
-      case VERS:
-        SEND_VERS;
-        return false;
-      case TILSLSH:
-        SEND_STRING ("~/.");
-        return false;
-      case EPRM:
-        eeconfig_init();
-        return false;
+      #endif // MOUSEKEY_ENABLE
     }
   } else { // KEY IS UP (!event.pressed)
     switch(keycode) {
+      #ifdef RGBLIGHT_ENABLE
+      // These fall through to RGB_TOG
+      // which saves the rgb config for the default layer if it is changed.
+      // This is neccesary because the RGB layer has its own color and when you
+      // change it isn't refelcted on the default layer unless saved to eeconf
+      case RGB_MODE_FORWARD:
+      case RGB_MODE_REVERSE:
+      case RGB_HUI:
+      case RGB_HUD:
+      case RGB_SAI:
+      case RGB_SAD:
+      case RGB_VAI:
+      case RGB_VAD:
+      case RGB_MODE_PLAIN:
+      case RGB_MODE_BREATHE:
+      case RGB_MODE_RAINBOW:
+      case RGB_MODE_SWIRL:
+      case RGB_MODE_SNAKE:
+      case RGB_MODE_KNIGHT:
+      case RGB_MODE_XMAS:
+      case RGB_MODE_GRADIENT:
+      case RGB_TOG:
+        eeconfig_debug_rgblight();
+        rgblight_startup_config.raw = eeconfig_read_rgblight();
+      #endif // RGBLIGHT_ENABLE
       #ifdef MOUSEKEY_ENABLE
       case A_MUL:
         mousekey_off(KC_MS_UP);
         mousekey_off(KC_MS_LEFT);
         mousekey_send();
         return false;
-
       case A_MUR:
         mousekey_off(KC_MS_UP);
         mousekey_off(KC_MS_RIGHT);
         mousekey_send();
         return false;
-
       case A_MDL:
         mousekey_off(KC_MS_DOWN);
         mousekey_off(KC_MS_LEFT);
         mousekey_send();
         return false;
-
       case A_MDR:
         mousekey_off(KC_MS_DOWN);
         mousekey_off(KC_MS_RIGHT);
         mousekey_send();
         return false;
-      #endif
+      #endif // MOUSEKEY_ENABLE
 
     }
   }
@@ -286,7 +319,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   rgblight_config_t rgblight_entry_config;
   rgblight_entry_config.raw = eeconfig_read_rgblight();
 
-  uint8_t default_layer = eeconfig_read_default_layer();
+  //uint8_t default_layer = eeconfig_read_default_layer();
   uint8_t tobright = 120;
 
   if (rgblight_entry_config.enable) {
@@ -308,7 +341,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case _FKEY:
       rgblight_enable();
       rgblight_mode(mode);
-      rgblight_sethsv(240, 255, tobright); // blue
+      rgblight_sethsv_noeeprom(240, 255, tobright); // blue
       break;
     case _PNTR:
       rgblight_enable();
@@ -333,27 +366,35 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case _MACR:
       rgblight_enable();
       rgblight_mode(mode);
-      rgblight_sethsv(16, 176, tobright); // springgreen
+      rgblight_sethsv(16, 176, tobright); // coral_red
       break;
     default:
+
+      #ifdef LAYOUT_COLEMAK
       if (default_layer & (1UL << _COLE)) {
-        //set color values but dont change brightness .. not tested
         rgblight_sethsv(300, 255, rgblight_entry_config.val); // magenta _COLE/_DVOR/_WORK not yet integrated ...
+        break;
       }
-      else if (default_layer & (1UL << _DVOR)) {
+      #endif // LAYOUT_COLEMAK
+
+      #ifdef LAYOUT_DVORAK
+      if (default_layer & (1UL << _DVOR)) {
         rgblight_sethsv(120, 255, rgblight_entry_config.val); // green _COLE/_DVOR/_WORK not yet integrated ...
+        break;
       }
-      else if (default_layer & (1UL << _WORK)) {
+      #endif // LAYOUT_DVORAK
+
+      #ifdef LAYOUT_WORKMAN
+      if (default_layer & (1UL << _WORK)) {
         rgblight_sethsv(43, 218, rgblight_entry_config.val); // goldenrod _COLE/_DVOR/_WORK not yet integrated ...
+        break;
       }
-      else {
-        //rgblight_set_teal;
-        // dprintf("Entering the default layer ...");
-        eeconfig_debug_rgblight();
-        // dprintf("Setting previous values for default\\ layer ...");
-        // reset default layer rgb values from defualts
-        rgblight_update_dword(rgblight_startup_config.raw);
-      }
+      #endif // LAYOUT_WORKMAN
+      // NO DEFAULT LAYERS MATCHED MUST BE QWERTY ...
+      //xprintf("Setting previous values for default layer: %d", default_layer);
+      eeconfig_debug_rgblight();
+      // reset default layer rgb values from startup or last saved values
+      rgblight_update_dword(rgblight_startup_config.raw);
       break;
   }
   return state;
@@ -408,14 +449,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   //This works well if you want this key to work as a "fast modifier". It favors being held over being tapped.
   int hold_cur_dance (qk_tap_dance_state_t *state) {
     if (state->count == 1) {
-      if (state->interrupted) {
+      //  if (state->interrupted) {
         if (!state->pressed) return SINGLE_TAP;
         else return SINGLE_HOLD;
-      }
-      else {
-        if (!state->pressed) return SINGLE_TAP;
-        else return SINGLE_HOLD;
-      }
+      // }
+      // else {
+      //   if (!state->pressed) return SINGLE_TAP;
+      //   else return SINGLE_HOLD;
+      // }
     }
     //If count = 2, and it has been interrupted - assume that user is trying to type the letter associated
     //with single tap.
@@ -436,12 +477,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   // TAB, ALT + SHIFT, TAB TAB, CTRL + SHIFT
 
   static xtap tab_state = {
-    .is_press_action = true,
+    .is_press_action = false,
     .state = 0
   };
 
+  void tab_every (qk_tap_dance_state_t *state, void *user_data) {
+    uint8_t sfted = get_mods() & (MOD_BIT(KC_LSFT)|MOD_BIT(KC_RSFT));
+    uint8_t ctled = get_mods() & (MOD_BIT(KC_LCTL)|MOD_BIT(KC_RCTL));
+    uint8_t alted = get_mods() & (MOD_BIT(KC_LALT)|MOD_BIT(KC_RALT));
+    if (sfted || ctled || alted) {
+      // xprintf("TAP:1-(%d) TD_TAB WAS modded -> sending <tab> and setting (is_press_action) true.\r\n", state->count);
+      register_code(KC_TAB);
+      tab_state.is_press_action = true;
+      state->finished = true;
+    }
+  }
+
   void tab_finished (qk_tap_dance_state_t *state, void *user_data) {
     tab_state.state = hold_cur_dance(state);
+    // xprintf("TAP:(%d) tab_state.state: (%d) --> IS PRESS ACTION ->in finished.\r\n", state->count, tab_state.state);
     switch (tab_state.state) {
       case SINGLE_TAP:  register_code(KC_TAB); break;  //send tab on single press
       case SINGLE_HOLD: register_code(KC_LSFT); register_code(KC_LCTL); break;
@@ -454,14 +508,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   void tab_reset (qk_tap_dance_state_t *state, void *user_data) {
-    switch (tab_state.state) {
-      case SINGLE_TAP:  unregister_code(KC_TAB); break; //unregister tab
-      case SINGLE_HOLD: unregister_code(KC_LSFT); unregister_code(KC_LCTL); break;
-      case DOUBLE_HOLD: unregister_code(KC_LCTL); unregister_code(KC_LALT); break; //let go of alt shift
-      case DOUBLE_TAP:  unregister_code(KC_TAB); break;
-      case TRIPLE_TAP:  unregister_code(KC_TAB); break;
-      case TRIPLE_HOLD: unregister_code(KC_LSFT); unregister_code(KC_LALT); break;
-      // default: break; // already sent all keycodes ...
+    if (tab_state.is_press_action) {
+      // xprintf("TAP:(%d) tab_state.state: (%d) is_press_action: (%d) --> NOT PRESS ACTION -> reseting tab_state.state to 0 -> in reset\r\n", state->count, tab_state.state, tab_state.is_press_action);
+      unregister_code(KC_TAB);
+      tab_state.is_press_action = false;
+    }
+    else {
+      switch (tab_state.state) {
+        //xprintf("TAP:(%d) tab_state.state: (%d) --> IS PRESS ACTION ->in reset.\r\n", state->count, tab_state.state);
+        case SINGLE_TAP:  unregister_code(KC_TAB); break; //unregister tab
+        case SINGLE_HOLD: unregister_code(KC_LSFT); unregister_code(KC_LCTL); break;
+        case DOUBLE_HOLD: unregister_code(KC_LCTL); unregister_code(KC_LALT); break; //let go of alt shift
+        case DOUBLE_TAP:  unregister_code(KC_TAB); break;
+        case TRIPLE_TAP:  unregister_code(KC_TAB); break;
+        case TRIPLE_HOLD: unregister_code(KC_LSFT); unregister_code(KC_LALT); break;
+        // default: break; // already sent all keycodes ...
+      }
     }
     tab_state.state = 0;
   }
@@ -470,11 +532,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   *****************  Enter Tap ***********************
   ---------------------------------------------------- */
 
-  // // Assumption: we don't care about trying to hit ,, quickly
-  static xtap ent_state = {
-    .is_press_action = true,
-    .state = 0
-  };
+  static stap ent_state = { .state = 0 };
 
   void ent_finished (qk_tap_dance_state_t *state, void *user_data) {
     ent_state.state = cur_dance(state); //Use the dance that favors being held
@@ -490,7 +548,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
   void ent_reset (qk_tap_dance_state_t *state, void *user_data) {
     switch (ent_state.state) {
-      case SINGLE_TAP:  unregister_code(ENTER); break; //unregister comma
+      case SINGLE_TAP:  unregister_code(KC_ENTER); break; //unregister comma
       case SINGLE_HOLD: layer_off(_FKEY); break;
       case DOUBLE_TAP:  break;
       case DOUBLE_HOLD: layer_off(_SYMB); break;
