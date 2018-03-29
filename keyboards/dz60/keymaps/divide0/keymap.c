@@ -2,6 +2,8 @@
 #include "divide0.h"
 #include "dynamic_macro.h"
 #include "print.h"
+//#include "../vim/vim.h"
+
 #ifdef MOUSEKEY_ENABLE
   #include "mousekey.h"
 #endif
@@ -12,10 +14,10 @@ qk_tap_dance_action_t tap_dance_actions[] = {
   // [CALC_PRINTSCREEN] = ACTION_TAP_DANCE_DOUBLE(KC_CALCULATOR, KC_PSCR),
   // [ALTF4] = ACTION_TAP_DANCE_DOUBLE(KC_F4,LALT(KC_F4)),
   [TTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, ttt_finished, ttt_reset),
-  [BSLHT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, bslh_finished, bslh_reset),
+  [BSLHT] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, bslh_finished, bslh_reset, 400),
   [CAPT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, cap_finished, cap_reset),
   [ENTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, ent_finished, ent_reset),
-  [TABT] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(tab_every, tab_finished, tab_reset, 600),
+  [TABT] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(tab_every, tab_finished, tab_reset, 400),
   [GUIT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, gui_finished, gui_reset),
   [LSFTT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lsft_finished, lsft_reset),
 //[LCTLT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lctl_finished, lctl_reset),
@@ -156,6 +158,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   // uint8_t shifted = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
   // uint8_t ctled = get_mods() & (MOD_BIT(KC_LCTL)|MOD_BIT(KC_RCTL));
 
+  bool SHIFTED = (keyboard_report->mods & MOD_BIT(KC_LSFT)) |
+                 (keyboard_report->mods & MOD_BIT(KC_RSFT));
+
 
   if (record->event.pressed) { // KEY IS DOWN
     switch(keycode) {
@@ -176,27 +181,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // dprintf("Going to base for clear ...\n");
         return false;
       case QWER:
-        layer_clear();
         //dprintf("trying switch QWER: %d\n", keycode);
         persistent_default_layer_set(1UL<<_QWER);
+        clear_keyboard();
         return false;
       #ifdef LAYOUT_COLEMAK
-        case COLE:
-          layer_clear();
-          persistent_default_layer_set(1UL<<_COLE);
-          return false;
+      case COLE:
+        persistent_default_layer_set(1UL<<_COLE);
+        clear_keyboard();
+        return false;
       #endif // LAYOUT_COLEMAK
       #ifdef LAYOUT_WORKMAN
-        case WORK:
-          layer_clear();
-          persistent_default_layer_set(1UL<<_WORK);
-          return false;
+      case WORK:
+        persistent_default_layer_set(1UL<<_WORK);
+        clear_keyboard();
+        return false;
       #endif // LAYOUT_WORKMAN
       #ifdef LAYOUT_DVORAK
-        case DVOR:
-          layer_clear();
-          persistent_default_layer_set(1UL<<_DVOR);
-          return false;
+      case DVOR:
+        persistent_default_layer_set(1UL<<_DVOR);
+        clear_keyboard();
+        return false;
       #endif // LAYOUT_DVORAK
       case FKEY:
         layer_on(_FKEY);
@@ -229,7 +234,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case EPRM:
         eeconfig_init();
         return false;
-      // RGB CHANGES
       // case DEBUG:
       //   debug_enable = true;
       //   print("DEBUG: enabled.\n");
@@ -282,7 +286,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       case RGB_MODE_XMAS:
       case RGB_MODE_GRADIENT:
       case RGB_TOG:
-        eeconfig_debug_rgblight();
+        // eeconfig_debug_rgblight();
         rgblight_startup_config.raw = eeconfig_read_rgblight();
       #endif // RGBLIGHT_ENABLE
       #ifdef MOUSEKEY_ENABLE
@@ -390,6 +394,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         break;
       }
       #endif // LAYOUT_WORKMAN
+
       // NO DEFAULT LAYERS MATCHED MUST BE QWERTY ...
       //xprintf("Setting previous values for default layer: %d", default_layer);
       eeconfig_debug_rgblight();
@@ -469,6 +474,38 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       else return TRIPLE_HOLD;
     }
     else return 8; //magic number. At some point this method will expand to work for more presses
+  }
+
+  /* ----------------------------------------------------
+  *************** Super tap toggle *******************
+  ---------------------------------------------------- */
+
+  static stap ttt_state = { .state = 0 };
+
+  void ttt_finished (qk_tap_dance_state_t *state, void *user_data) {
+    ttt_state.state = cur_dance(state);
+    switch (ttt_state.state) {
+      case SINGLE_TAP:  layer_invert(_FKEY); break;
+      case SINGLE_HOLD: layer_on(_FKEY); break;
+      case DOUBLE_TAP:  layer_invert(_PNTR); break;
+      case DOUBLE_HOLD: layer_on(_PNTR); break;
+      case DOUBLE_SINGLE_TAP: layer_invert(_PNTR); break;
+      case TRIPLE_TAP:  layer_invert(_SYMB); break;
+      case TRIPLE_HOLD: layer_on(_SYMB); break;
+    }
+  }
+
+  void ttt_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (ttt_state.state) {
+      case SINGLE_TAP:  break;
+      case SINGLE_HOLD: layer_off(_FKEY); break;
+      case DOUBLE_TAP:  break;
+      case DOUBLE_HOLD: layer_off(_PNTR); break;
+      case DOUBLE_SINGLE_TAP:  break;
+      case TRIPLE_TAP:  break;
+      case TRIPLE_HOLD: layer_off(_SYMB); break;
+    }
+    ttt_state.state = 0;
   }
 
   /* ----------------------------------------------------
@@ -563,10 +600,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   ---------------------------------------------------- */
 
   //Good example for accessing multiple layers from the same key.
-  static xtap CAP_state = {
-    .is_press_action = true,
-    .state = 0
-  };
+  static stap CAP_state = { .state = 0 };
 
   void cap_finished (qk_tap_dance_state_t *state, void *user_data) {
     CAP_state.state = cur_dance(state);
@@ -591,122 +625,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   /* ----------------------------------------------------
-  *************** Super tap toggle *******************
+  // *************** LSFT tap toggle *******************
   ---------------------------------------------------- */
 
-  static xtap ttt_state = {
-    .is_press_action = true,
-    .state = 0
-  };
+  static stap LSFT_state = { .state = 0 };
 
-  void ttt_finished (qk_tap_dance_state_t *state, void *user_data) {
-    ttt_state.state = cur_dance(state);
-    switch (ttt_state.state) {
-      case SINGLE_TAP:  layer_invert(_FKEY); break;
-      case SINGLE_HOLD: layer_on(_FKEY); break;
-      case DOUBLE_TAP:  layer_invert(_PNTR); break;
-      case DOUBLE_HOLD: layer_on(_PNTR); break;
-      case DOUBLE_SINGLE_TAP: layer_invert(_PNTR); break;
-      case TRIPLE_TAP:  layer_invert(_SYMB); break;
-      case TRIPLE_HOLD: layer_on(_SYMB); break;
+  void lsft_finished (qk_tap_dance_state_t *state, void *user_data) {
+    LSFT_state.state = hold_cur_dance(state);
+    switch (LSFT_state.state) {
+      case SINGLE_TAP: set_oneshot_layer(_SYMB, ONESHOT_START); break;
+      case DOUBLE_TAP: set_oneshot_layer(_MACR, ONESHOT_START); break;
+      case SINGLE_HOLD: register_code(KC_LSFT); break;
+      default: register_code(KC_LSFT);
     }
   }
 
-  void ttt_reset (qk_tap_dance_state_t *state, void *user_data) {
-    switch (ttt_state.state) {
-      case SINGLE_TAP:  break;
-      case SINGLE_HOLD: layer_off(_FKEY); break;
-      case DOUBLE_TAP:  break;
-      case DOUBLE_HOLD: layer_off(_PNTR); break;
-      case DOUBLE_SINGLE_TAP:  break;
-      case TRIPLE_TAP:  break;
-      case TRIPLE_HOLD: layer_off(_SYMB); break;
+  void lsft_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (LSFT_state.state) {
+      case SINGLE_TAP: clear_oneshot_layer_state(ONESHOT_PRESSED); break;
+      case DOUBLE_TAP: clear_oneshot_layer_state(ONESHOT_PRESSED); break;
+      case SINGLE_HOLD: unregister_code(KC_LSFT); break;
+      default: unregister_code(KC_LSFT);
     }
-    ttt_state.state = 0;
-  }
-
-  /* ----------------------------------------------------
-  *************** RCTL tap toggle *******************
-  ---------------------------------------------------- */
-
-  //Good example for accessing multiple layers from the same key.
-  static xtap RCTL_state = {
-    .is_press_action = true,
-    .state = 0
-  };
-
-  void rctl_finished (qk_tap_dance_state_t *state, void *user_data) {
-    RCTL_state.state = cur_dance(state);
-    switch (RCTL_state.state) {
-      case SINGLE_TAP:  layer_move(_LEDS); break;
-      case SINGLE_HOLD: register_code(KC_RCTL); break;
-    }
-  }
-
-  void rctl_reset (qk_tap_dance_state_t *state, void *user_data) {
-    switch (RCTL_state.state) {
-      case SINGLE_TAP:  break;
-      case SINGLE_HOLD: unregister_code(KC_RCTL); break;
-    }
-    RCTL_state.state = 0;
-  }
-
-  /* ----------------------------------------------------
-  *****************  TAP TEMPLATE tap  ****************
-  ---------------------------------------------------- */
-
-  //Good example for accessing multiple layers from the same key.
-  static xtap BSLH_state = {
-    .is_press_action = true,
-    .state = 0
-  };
-
-  void bslh_finished (qk_tap_dance_state_t *state, void *user_data) {
-    BSLH_state.state = cur_dance(state);
-    switch (BSLH_state.state) {
-      case SINGLE_TAP:  reset_keyboard(); break;
-      case SINGLE_HOLD: layer_move(_SYMB); break;
-    }
-  }
-
-  void bslh_reset (qk_tap_dance_state_t *state, void *user_data) {
-    switch (BSLH_state.state) {
-      case SINGLE_TAP:  break;
-      case SINGLE_HOLD: layer_off(_SYMB); break;
-    }
-    BSLH_state.state = 0;
-  }
-
-  /* ----------------------------------------------------
-  *****************  GUI tap  ****************
-  ---------------------------------------------------- */
-
-  //Good example for accessing multiple layers from the same key.
-  static xtap GUI_state = {
-    .is_press_action = true,
-    .state = 0
-  };
-
-  void gui_finished (qk_tap_dance_state_t *state, void *user_data) {
-    GUI_state.state = cur_dance(state);
-    switch (GUI_state.state) {
-      case SINGLE_TAP:  register_code(KC_LGUI); break;
-      case SINGLE_HOLD: register_code(KC_LGUI); break;
-      case DOUBLE_TAP:  SEND_STRING("DOUBLE_TAP"); break;
-      case DOUBLE_HOLD: SEND_STRING("DOUBLE_HOLD"); break;
-      case DOUBLE_SINGLE_TAP: SEND_STRING("DOUBLE_SINGLE_TAP"); break;
-    }
-  }
-
-  void gui_reset (qk_tap_dance_state_t *state, void *user_data) {
-    switch (GUI_state.state) {
-      case SINGLE_TAP:  unregister_code(KC_LGUI); break;
-      case SINGLE_HOLD: unregister_code(KC_LGUI); break;
-      case DOUBLE_TAP:  break;
-      case DOUBLE_HOLD: break;
-      case DOUBLE_SINGLE_TAP: break;
-    }
-    GUI_state.state = 0;
+    LSFT_state.state = 0;
   }
 
   /* ----------------------------------------------------
@@ -714,10 +655,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   ---------------------------------------------------- */
 
   //Good example for accessing multiple layers from the same key.
-  static xtap LCTL_state = {
-    .is_press_action = true,
-    .state = 0
-  };
+  static stap LCTL_state = { .state = 0 };
 
   void lctl_finished (qk_tap_dance_state_t *state, void *user_data) {
     LCTL_state.state = cur_dance(state);
@@ -742,30 +680,78 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   /* ----------------------------------------------------
-  // *************** LSFT tap toggle *******************
+  *****************  GUI tap  ****************
   ---------------------------------------------------- */
 
-  static xtap LSFT_state = {
-    .is_press_action = true,
-    .state = 0
-  };
+  //Good example for accessing multiple layers from the same key.
+  static stap GUI_state = { .state = 0 };
 
-  void lsft_finished (qk_tap_dance_state_t *state, void *user_data) {
-    LSFT_state.state = hold_cur_dance(state);
-    switch (LSFT_state.state) {
-      case SINGLE_TAP: set_oneshot_layer(_SYMB, ONESHOT_START); break;
-      case SINGLE_HOLD: register_code(KC_LSFT); break;
-      default: register_code(KC_LSFT);
+  void gui_finished (qk_tap_dance_state_t *state, void *user_data) {
+    GUI_state.state = cur_dance(state);
+    switch (GUI_state.state) {
+      case SINGLE_TAP:  register_code(KC_LGUI); break;
+      case SINGLE_HOLD: register_code(KC_LGUI); break;
+      case DOUBLE_TAP:  SEND_STRING("DOUBLE_TAP"); break;
+      case DOUBLE_HOLD: SEND_STRING("DOUBLE_HOLD"); break;
+      case DOUBLE_SINGLE_TAP: SEND_STRING("DOUBLE_SINGLE_TAP"); break;
     }
   }
 
-  void lsft_reset (qk_tap_dance_state_t *state, void *user_data) {
-    switch (LSFT_state.state) {
-      case SINGLE_TAP: clear_oneshot_layer_state(ONESHOT_PRESSED); break;
-      case SINGLE_HOLD: unregister_code(KC_LSFT); break;
-      default: unregister_code(KC_LSFT);
+  void gui_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (GUI_state.state) {
+      case SINGLE_TAP:  unregister_code(KC_LGUI); break;
+      case SINGLE_HOLD: unregister_code(KC_LGUI); break;
+      case DOUBLE_TAP:  break;
+      case DOUBLE_HOLD: break;
+      case DOUBLE_SINGLE_TAP: break;
     }
-    LSFT_state.state = 0;
+    GUI_state.state = 0;
+  }
+
+  /* ----------------------------------------------------
+  *************** RCTL tap toggle *******************
+  ---------------------------------------------------- */
+
+  //Good example for accessing multiple layers from the same key.
+  static stap RCTL_state = { .state = 0 };
+
+  void rctl_finished (qk_tap_dance_state_t *state, void *user_data) {
+    RCTL_state.state = cur_dance(state);
+    switch (RCTL_state.state) {
+      case SINGLE_TAP:  layer_move(_LEDS); break;
+      case SINGLE_HOLD: register_code(KC_RCTL); break;
+    }
+  }
+
+  void rctl_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (RCTL_state.state) {
+      case SINGLE_TAP:  break;
+      case SINGLE_HOLD: unregister_code(KC_RCTL); break;
+    }
+    RCTL_state.state = 0;
+  }
+
+  /* ----------------------------------------------------
+  *****************  TAP TEMPLATE tap  ****************
+  ---------------------------------------------------- */
+
+  //Good example for accessing multiple layers from the same key.
+  static stap BSLH_state = { .state = 0 };
+
+  void bslh_finished (qk_tap_dance_state_t *state, void *user_data) {
+    BSLH_state.state = cur_dance(state);
+    switch (BSLH_state.state) {
+      case SINGLE_TAP:  reset_keyboard(); break;
+      case SINGLE_HOLD: layer_move(_SYMB); break;
+    }
+  }
+
+  void bslh_reset (qk_tap_dance_state_t *state, void *user_data) {
+    switch (BSLH_state.state) {
+      case SINGLE_TAP:  break;
+      case SINGLE_HOLD: layer_off(_SYMB); break;
+    }
+    BSLH_state.state = 0;
   }
 
   /* ----------------------------------------------------
