@@ -158,8 +158,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   // uint8_t shifted = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
   // uint8_t ctled = get_mods() & (MOD_BIT(KC_LCTL)|MOD_BIT(KC_RCTL));
 
-  bool SHIFTED = (keyboard_report->mods & MOD_BIT(KC_LSFT)) |
-                 (keyboard_report->mods & MOD_BIT(KC_RSFT));
+  // bool SHIFTED = (keyboard_report->mods & MOD_BIT(KC_LSFT)) |
+                 // (keyboard_report->mods & MOD_BIT(KC_RSFT));
 
 
   if (record->event.pressed) { // KEY IS DOWN
