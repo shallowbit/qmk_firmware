@@ -69,3 +69,5 @@ id_rsa_*
 /.vs
 .vscode/ipch/9bdaa930692ad6d/keymap.ipch
 .vscode/ipch/a07fdd2a44485466/keymap.ipch
+
+\.vscode/
