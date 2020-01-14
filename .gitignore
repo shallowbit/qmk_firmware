@@ -1,3 +1,4 @@
+.history/
 .dep
 *.o
 *.bin
@@ -24,7 +25,8 @@ quantum/version.h
 .idea/
 CMakeLists.txt
 cmake-build-debug
-.DS_STORE
+doxygen/
+.DS_Store
 /util/wsl_downloaded
 /util/win_downloaded
 /keyboards/*/Makefile
@@ -43,6 +45,7 @@ cmake-build-debug
 .project
 .settings/
 .idea
+*.iml
 .browse.VC.db*
 *.stackdump
 util/Win_Check_Output.txt
@@ -52,13 +55,15 @@ util/Win_Check_Output.txt
 .vscode/tasks.json
 .vscode/last.sql
 .vscode/temp.sql
+.vscode/ipch/
 .stfolder
 .tags
+.history
 
 # ignore image files
 *.png
-*.jpg
 *.gif
+*.jpg
 
 # Do not ignore MiniDox left/right hand eeprom files
 !keyboards/minidox/*.eep
@@ -67,3 +72,6 @@ util/Win_Check_Output.txt
 secrets.tar
 id_rsa_*
 /.vs
+
+# python things
+__pycache__
